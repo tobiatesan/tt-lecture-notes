@@ -1,0 +1,225 @@
+\section{Judgements}
+
+In usual mathematical practice, we specify formulas and rules of inference, and
+then \emph{a posteriori} give them a semantical interpretation, usually
+interpreting them in set theory. Here we will avoid keeping form and meaning
+(content) apart, and instead we will at the same time display certain forms of a
+judgement and inference and explain them semantically.
+
+Our formal system will consist of a set of rules for deriving judgements of a
+variety of forms. Judgements are statements about one or more syntactic objects
+of a specified sort, and they must be explained by saying what it is that we
+must know in order to have the right to make a judgement of any one of the
+various forms.
+
+So far we have introduced, in particular, the notion of set and element of a
+set. So it seems mandatory to have judgements that allow us to assert facts
+abount these entities. Hence, we consider four forms:
+
+\begin{enumerate}
+\item $\setj{A}$ ($A$ is a set);
+\item $A = B$ ($A$ and $B$ are equal sets);
+\item $\inj{a}{A}$ ($a$ is an element of the set $A$);
+\item $\eqelj{a}{b}{A}$ ($a$ and $b$ are equal elements of the set $A$).
+\end{enumerate}
+
+\subsection{Explanations of the forms of judgement}
+
+\subsubsection{$A$ set}
+
+To explain the judgement $\setj{A}$, we have to know what a set is, or
+equivalently what it is to be known in order to have the right to make such a
+judgement. Intuitively we know that a set is defined by prescribing how its
+elements are formed. But $2 + 2$ is intuitively an element of $\NN$, even if it
+cannot be obtained by the rules. So we need to distinguish between
+\emph{canonical} and \emph{noncanonical} elements. Hence \emph{a set $A$ is
+  defined by prescribing how a canonical element of $A$ is formed, as well as
+  how equal canonical elements of $A$ are formed}.
+
+\subsubsection{$A = B$}
+
+Two sets $A$ and $B$ are equal if
+
+\[
+  \begin{prooftree}
+    \inj{a}{A}
+    \justifies
+    \inj{a}{B}
+  \end{prooftree},\qquad
+  \begin{prooftree}
+    \inj{a}{B}
+    \justifies
+    \inj{a}{A}
+  \end{prooftree}
+\]
+
+and
+
+\[
+\begin{prooftree}
+    \inj{a = b}{A}
+    \justifies
+    \inj{a = b}{B}
+  \end{prooftree},\qquad
+  \begin{prooftree}
+    \inj{a = b}{B}
+    \justifies
+    \inj{a = b}{A}
+  \end{prooftree}
+\]
+
+for arbitrary canonical elements $a, b$.
+
+\subsubsection{$\inj{a}{A}$}
+
+Assuming that we know what a set $A$ is, and therefore how to construct its
+canonical elements, then \emph{an elements $a$ of a set $A$ is an effective
+  method which, when executed, yields a canonical element of $A$ as a result.}
+
+\subsubsection{$a = b \in A$}
+
+Finally \emph{two arbitrary elements $a$ and $b$ of a set $A$ are equal if, when
+executed, $a$ and $b$ yield equal canonical elements of $A$ as results.}
+
+This definition makes sense because we assume that we already know that $A$ is a
+set, and therefore when two canonical elements are equal.
+
+\subsection{Rules of equality}
+
+TODO...
+
+\subsection{Hypothetical judgements and substitution rules}
+
+We have seen that a family of elements (and similarly a family of sets) can be
+expressed in the form $\hinj{b(x)}{B}{x \in A}$. This is just a generalization
+of the judgement $\inj{b}{B}$, meaning that $b$ is an element of set $B$, to a
+hypothetical judgement saying that $b(x)$ is an element of the set $B$ provided
+$x$ is an element of the set $A$. Such a generalization can be carried out for
+all four forms of judgement, as follows.
+
+First, we see how terms in the theory are represented in the judgements. In
+particular, we have terms/expressions $t$. These terms can have zero or more
+free variables in them, hence $t(x_1, \dots, x_n)$. We can think of the term
+$t(a_1, \dots, a_n)$ as the term $t$ in which the free variables have been
+replaced with the terms $a_1, \dots, a_n$. The syntax and grammar of terms is
+left unspecified and open-ended, we just assume a primitive notion of
+\emph{variable} and sustitution.
+
+Associated to the notion of (free) variable, there is the notion of abstraction,
+which means that a variable in a term acts as a mere place-holder. We denote by
+$(x)t$ the abstraction of $x$ in the term $t$, which may of may not be free in
+it.
+
+\paragraph{1.}
+
+The first form of hypothetical judgement is the generalization of the set
+judgement
+
+\[
+  \hsetj{B(x)}{x \in A}
+\]
+
+which says that $B(x)$ is a set under the assumption that $x \in A$, of that $B$
+is a family of sets indexed by $A$. Moreover, such a family should respect
+equality of the index set involved, hence justifying the following
+\emph{substitution rules}
+
+\[
+  \begin{prooftree}
+    \inj{a}{A} \qquad \hsetj{B(x)}{x \in A}
+    \justifies
+    \setj{B(a)}
+  \end{prooftree}, \qquad
+  \begin{prooftree}
+    \eqelj{a}{c}{A} \qquad \hsetj{B(x)}{x \in A}
+    \justifies
+    \seteqj{B(a)}{B(c)}
+  \end{prooftree}
+\]
+
+\paragraph{2.}
+
+We said that equality between families of sets is meant to be extensional. This
+is the meaning of the hypothetical judgement
+
+\[
+  \hseteqj{B(x)}{D(x)}{x \in A}
+\]
+
+which says that $B(x)$ and $D(x)$ are equal families of sets over the set
+$A$. Hence the following substitution rule is justified
+
+\[
+  \begin{prooftree}
+    \inj{a}{A} \qquad \hseteqj{B(x)}{D(x)}{x \in A}
+    \justifies
+    \seteqj{B(a)}{D(a)}
+  \end{prooftree}
+\]
+
+We can now derive the rule
+
+\[
+  \begin{prooftree}
+    \eqelj{a}{c}{A} \qquad \hseteqj{B(x)}{D(x)}{x \in A}
+    \justifies
+    \seteqj{B(a)}{D(c)}
+  \end{prooftree}
+\]
+
+TODO...
+
+\paragraph{3.}
+
+A judgement of the form
+
+\[
+  \hinj{b(x)}{B(x)}{x \in A}
+\]
+
+means that we know $b(a)$ to be an element of the set $B(a)$ assuming we know
+$a$ to be an element of the set $A$, that is, $b$ is an operation/family from
+elements of the set $A$ to elements of the corresponding set in the family
+$B(x)$. Moreover, operations must respect equality, thus justifying the
+following substitution rules:
+
+\[
+  \begin{prooftree}
+    \inj{a}{A} \qquad \hinj{b(x)}{B(x)}{x \in A}
+    \justifies
+    \inj{b(a)}{B(a)}
+  \end{prooftree}, \qquad
+  \begin{prooftree}
+    \eqelj{a}{c}{A}\qquad \hinj{b(x)}{B(x)}{x \in A}
+    \justifies
+    \eqelj{b(a)}{b(c)}{B(a)}
+  \end{prooftree}
+\]
+
+\paragraph{4.}
+
+The judgement
+
+\[
+  \heqelj{b(x)}{d(x)}{B(x)}{x \in A}
+\]
+
+means that $b(x)$ and $d(x)$ are (extensionally) equal operations/families of
+elements indexed by $A$, hence justifying the following substitution rule:
+
+\[
+  \begin{prooftree}
+    \inj{a}{A} \qquad \heqelj{b(x)}{d(x)}{B(x)}{x \in A}
+    \justifies
+    \eqelj{b(a)}{d(a)}{B(a)}
+  \end{prooftree}
+\]
+
+\subsubsection{Hypothetical judgements with more than one assumption}
+
+TODO...
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../notes"
+%%% End:
