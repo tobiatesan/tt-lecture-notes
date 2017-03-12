@@ -1,0 +1,563 @@
+\section{Sets}
+
+We have already seen that to define a set is to give an exhaustive method (in
+the form of a finite number of rules) to construct its canonical elements,
+together with a notion of equality between those elements. We now give a precise
+description of the forms of rules that will be used to introduce sets in our
+theory. There will be four kinds of rules:
+
+\begin{enumerate}
+\item Set formation rules: they describe under which conditions we may infer
+  that $A$ is a set, and when two sets $A$ and $B$ are equal;
+\item Introduction rules: they describe how to construct the canonical elements
+  of a set, and when two canonical elements are to be considered equal;
+\item Elimination rules: they show how to \emph{use} the elements of a set, or
+  equivalently how to define operations of elements of the set. These give a
+  form of induction/recursion, saying that in order to define an operation on
+  elements of $A$ it is sufficient to define it only of its canonical elements;
+\item Equality rules: they relate introduction and elimination rules by
+  describing how the selector computes on the different canonical elements;
+\end{enumerate}
+
+Note that elimination rules have a \strong{double meaning}: they show how to
+define operations by (primitive) recursion on the canonical elements of a set,
+and they equip the inductive type with an induction principle, basically saying
+that the set is the least one that is closed under the introduction rules.
+Elimination rules come in pairs, where the second shows how the eliminator
+symbol that we introduced \strong{respects equality}.
+
+Equality rules give a formal and precise (computational) semantics to the
+symbols that are introduced in the elimination rules. In particular, they
+explain how these symbols behave by showing how they compute on the canonical
+elements. By definition of element of a set, we know this is enough.
+
+\subsection{Finite types}
+
+Finite types are defined by the following meta-rules of formation
+
+\[
+  \setj{\nty{n}}, \qquad \seteqj{\nty{n}}{\nty{n}}
+\]
+
+and introduction (with the obvious equalities):
+
+\[
+  \inj{0_n}{\nty{n}}, \; \inj{1_n}{\nty{n}}, \; \dots, \;
+  \inj{(n-1)_n}{\nty{n}}
+\]
+
+As an example of how elimination rules equip inductive sets with a principle of
+induction, to define an operation on arbitrary elements of $\nty{n}$ is to
+define it on all possible elements of the set:
+
+\[
+  \begin{prooftree}
+    \hsetj{C(c)}{c \in \nty{n}}
+    \quad \inj{c}{\nty{n}}
+    \quad \inj{d_1}{C(0_n)}
+    \quad \inj{d_2}{C(1_n)}
+    \quad \dots \quad  \inj{d_n}{C((n-1)_n)}
+    \justifies
+    \inj{E_n(c, d_1, d_2, \dots, d_n)}{C(c)}
+  \end{prooftree}
+\]
+
+again with the obvious equalities. The computation rule is also straightforward:
+
+\[
+  \begin{prooftree}
+    \hsetj{C(c)}{c \in \nty{n}}
+    \qquad \inj{d_1}{C(0_n)}
+    \qquad \inj{d_2}{C(1_n)}
+    \qquad \dots \qquad  \inj{d_n}{C((n-1)_n)}
+    \justifies
+    \eqelj{E_n((i-1)_n, d_1, d_2, \dots, d_n)}{d_i}{C((i-1)_n)}
+  \end{prooftree}
+\]
+
+Among the finite types, two will be particularly important, hence we abbreviate
+them as such
+
+\[
+  \onety \equiv \nty{1},\qquad \twoty \equiv \nty{2}
+\]
+
+Note that $\onety$ is what is usually called \emph{unit} in programming
+languages, whereas $\twoty$ is the boolean type. We also introduce the following
+abbreviations for their elements:
+
+\[
+  \star \equiv 0_1, \qquad \ffalse \equiv 0_2, \qquad \ttrue \equiv 1_2
+\]
+
+\begin{example}
+  We now show that type theory, being a theory of \emph{dependent} types, is
+  sufficiently powerful to accept programs such as the following as well-typed:
+
+  \[
+    \textsf{if}\; b \; \textsf{then}\; \textsf{true}\; \textsf{else}\; 5
+  \]
+
+  where $\inj{b}{\twoty}$ and $\inj{5}{\NN}$. Note that in conventional
+  programming languages this program whould be ill-typed, since the two branches
+  of the conditional statement have different types. Being type theory a far
+  more expressive functional programming language, we can express this by saying
+  that the return type of the conditional is a family of types depending on
+  the value of the input; in particular, the family will map $\ttrue$ to $\twoty$
+  and $\ffalse$ to $\NN$. So suppose we have a family $C$ such that $C(\ttrue) =
+  \twoty$ and $C(\ffalse) = \NN$. Then:
+
+  \[
+    \begin{prooftree}
+      \hsetj{C(b)}{\inj{b}{\twoty}} \qquad
+      \inj{b}{\twoty} \quad
+      \[
+        \inj{\ttrue}{\twoty}\quad
+        C(\ttrue) = \twoty
+        \justifies
+        \inj{\ttrue}{C(\ttrue)}
+      \]
+      \quad
+      \[
+        \inj{5}{\NN}\quad C(\ffalse) = \NN
+        \justifies
+        \inj{5}{C(\ffalse)}
+      \]
+      \justifies
+      \inj{E_2(b, \ttrue, 5)}{C(b)}
+    \end{prooftree}
+  \]
+  
+\end{example}
+
+\subsection{Natural numbers}
+
+We now move to the most basic example of infinite set, namely the set of
+non-negative integers, natural numbers. Infinite sets can be described by
+giving a finite number of rules that describe their elements inductively:
+
+\[
+  \setj{\NN}, \qquad \seteqj{\NN}{\NN}
+\]
+
+\[
+  \inj{0}{\NN},\qquad
+  \begin{prooftree}
+    \inj{n}{\NN}
+    \justifies
+    \inj{s(n)}{\NN}
+  \end{prooftree}
+\]
+
+\[
+  \eqelj{0}{0}{\NN},\qquad
+  \begin{prooftree}
+    \eqelj{n}{m}{\NN}
+    \justifies
+    \eqelj{s(n)}{s(m)}{\NN}
+  \end{prooftree}
+\]
+
+The elimination rule is essentially a statement of the principle of induction
+for natural numbers, or equivalently a rule to define operations by primitive
+recursion (but in a more powerful way since the return type can depend on the
+argument).
+
+\[
+  \begin{prooftree}
+    \hsetj{C(n)}{\inj{n}{\NN}} \quad
+    \inj{n}{\NN} \quad
+    \inj{d}{C(0)} \quad
+    \[(\inj{x}{\NN}, \inj{y}{C(x)})\justifies \inj{e(x,y)}{C(s(x))}\]
+    \justifies
+    \inj{\natrec{n}{d}{(x,y)e(x,y)}}{C(n)}
+  \end{prooftree}
+\]
+
+The recursion symbol introduced by the elimination rule has a simple semantical
+explanation in terms of its computations: it first evaluates $n$, which is known
+to yield either $0$ or $s(n)$ for some $\inj{n}{\NN}$. In the first case, it
+evaluates $d$ and returns the result. Otherwise, it takes $n$ and feeds it to
+$e$ as its first argument, together with the result of evaluating itself on the
+predecessor, namely $n$. The second elimination rule shows that the recursor
+respects equality in the obvious way:
+
+\[
+  \begin{prooftree}
+    \hsetj{C(n)}{\inj{n}{\NN}} \quad
+    \eqelj{n}{m}{\NN} \quad
+    \eqelj{d}{d'}{C(0)} \quad
+    \[(\inj{x}{\NN}, \inj{y}{C(x)})\justifies \eqelj{e(x,y)}{e'(x,y)}{C(s(x))}\]
+    \justifies
+    \eqelj{\natrec{n}{d}{(x,y)e(x,y)}}
+    {\natrec{m}{d'}{(x,y)e'(x,y)}}
+    {C(n)}
+  \end{prooftree}
+\]
+
+The equality rules, which are given for each possible way to construct
+canonical forms, just show how recursion on the argument works.
+
+\[
+  \begin{prooftree}
+    \hsetj{C(n)}{\inj{n}{\NN}} \quad
+    \inj{d}{C(0)} \quad
+    \[(\inj{x}{\NN}, \inj{y}{C(x)})\justifies \inj{e(x,y)}{C(s(x))}\]
+    \justifies
+    \eqelj{\natrec{0}{d}{(x,y)e(x,y)}}{d}{C(0)}
+  \end{prooftree}
+\]
+
+\[
+  \begin{prooftree}
+    \hsetj{C(n)}{\inj{n}{\NN}} \quad
+    \inj{d}{C(0)} \quad
+    \[(\inj{x}{\NN}, \inj{y}{C(x)})\justifies \inj{e(x,y)}{C(s(x))}\]
+    \justifies
+    \eqelj{\natrec{s(n)}{d}{(x,y)e(x,y)}}{e(n,
+      \natrec{n}{d}{(x,y)e(x,y)}
+    }{C(s(n))}
+  \end{prooftree}
+\]
+
+\begin{example}
+  As an example, we can try to define the summation operation on natural
+  numbers. Recall that it is defined as follows by primitive recursion:
+
+  \begin{align*}
+    \textsf{sum}(0,m) & = m \\
+    \textsf{sum}(s(n),m) & = s(\textsf{sum}(n,m))
+  \end{align*}
+
+  In type theory it is no different:
+
+  \[
+    \begin{prooftree}
+      \hsetj{\NN}{\inj{n}{\NN}} \qquad
+      \inj{n}{\NN} \qquad
+      \inj{m}{\NN} \qquad
+      \[(\inj{x}{\NN}, \inj{y}{\NN})\justifies \inj{s(y)}{\NN}\]
+      \justifies
+      \inj{\natrec{n}{m}{(x,y)s(y)}}{\NN}
+    \end{prooftree}
+  \]
+
+  Hence $\textsf{sum}(n,m) \equiv \natrec{n}{m}{(x,y)s(y)}$.
+
+\end{example}
+
+\begin{example}
+  Multiplication can be similarly defined, in terms of summation:
+
+  \begin{align*}
+    \textsf{mul}(0,m) & = 0 \\
+    \textsf{mul}(s(n),m) & = \textsf{sum}(m, \textsf{mul}(n,m))
+  \end{align*}
+
+  \[
+    \begin{prooftree}
+      \hsetj{\NN}{\inj{n}{\NN}} \qquad
+      \inj{n}{\NN} \qquad
+      \inj{0}{\NN} \qquad
+      \[(\inj{x}{\NN}, \inj{y}{\NN}, \inj{m}{\NN})\justifies \inj{\textsf{sum}(m, y)}{\NN}\]
+      \justifies
+      \inj{\natrec{n}{0}{(x,y)\textsf{sum}(m,y)}}{\NN}
+    \end{prooftree}
+  \]
+
+  Then, $\textsf{mul}(n,m) \equiv \natrec{n}{0}{(x,y)\textsf{sum}(m,y)}$.
+
+\end{example}
+
+\begin{exercise}
+  Define the exponentiation operation.
+\end{exercise}
+
+\subsection{Disjoint union of a family of sets}
+
+We have seen that the term $\hsetj{b(x)}{x \in A}$ denotes a family of sets
+indexed by the elements of the set $A$. We may want to consider the disjoint
+union of the sets the constitute the family:
+
+\[
+  \begin{prooftree}
+    \setj{A} \qquad \hsetj{B(x)}{x \in A}
+    \justifies
+    \setj{\sigmaab}
+  \end{prooftree}
+\]
+
+Two disjoint unions are equal when the index set and the family of which we do
+the union are equal:
+
+\[
+  \begin{prooftree}
+    A = C \qquad \hseteqj{B(x)}{D(x)}{x \in A}
+    \justifies
+    \seteqj{\sigmaab}{\sigmatype{x \in C}{D(x)}}
+  \end{prooftree}
+\]
+
+The elements of a disjoint union of sets are, intuitively, all the elements from
+all the sets that constitute the family, together with the information that
+tells us from which set of the family the element comes from. This information
+is easily preserved by remembering the index of the sets from which the element
+comes from.
+
+\[
+  \begin{prooftree}
+    \inj{a}{A} \qquad \inj{b}{B(a)}
+    \justifies
+    \inj{(a,b)}{\sigmaab}
+  \end{prooftree}
+\]
+
+Equal canonical elements of this set can be formed when the two components are
+equal (possibly non-canonical) elements:
+
+\[
+  \begin{prooftree}
+    \eqelj{a}{c}{A} \qquad \eqelj{b}{d}{B(a)}
+    \justifies
+    \eqelj{(a,b)}{(c,d)}{\sigmaab}
+  \end{prooftree}
+\]
+
+The elimination rule introduces the eliminator $E$:
+
+\[
+  \begin{prooftree}
+    \hsetj{C(z)}{\inj{z}{\textstyle{\sum}_{x\in A}B(x)}}\qquad
+    z \in \sigmaab \quad
+    d(x,y) \in C(\langle x, y \rangle) (x \in A, y \in B(x))
+    \justifies
+    E(z,(x,y)d(x,y)) \in C(z)
+  \end{prooftree}
+\]
+
+The second elimination rule tells us how the eliminator symbol respects equality
+of the entities involved.
+
+\[
+TODO...
+\]
+
+The equality rules tells us the semantics of the eliminator symbol when acting
+of the canonical elements, that is, the pair.
+
+\[
+  \begin{prooftree}
+    \inj{a}{A} \qquad \inj{b}{B(a)} \qquad
+    d(x,y) \in C(\langle x, y \rangle) (x \in A, y \in B(x))
+    \justifies
+    E(\pair{a}{b},(x,y)d(x,y)) = d(a,b) \in C(\pair{a}{b})
+  \end{prooftree}
+\]
+
+\begin{example}
+  
+
+We now define the first and second projection operations as an example of how to
+use the rules introduced so far to build operations. The first projection should
+be an operation $\textsf{fst}$ such that
+
+\[
+  \hinj{\fst{z}}{A}{z \in \bigsigmaty{x\in A}{B(x)}}
+\]
+
+hence we use the elimination rule of the disjoint union type to define it:
+
+\[
+  \begin{prooftree}
+    \hsetj{A}{z \in \sigmaab} \quad \inj{z}{\sigmaab} \quad
+    \begin{prooftree}
+      (x \in A, y \in B(x))
+      \justifies
+      x \in A
+    \end{prooftree}
+    \justifies
+    E(z,(x,y).x) \in A
+  \end{prooftree}
+\]
+
+So we put $\textsf{fst}(z) \equiv E(z,(x,y).x)$. We have to check that the
+operation we defined has the intended behaviour. This can be done with the
+equality rule:
+
+\[
+  \begin{prooftree}
+    \hsetj{A}{\inj{z}{\sigmaab}} \quad \inj{z}{\sigmaab} \quad
+    \begin{prooftree}
+      (x \in A, y \in B(x))
+      \justifies
+      x \in A
+    \end{prooftree}
+    \justifies
+    E(z,(x,y).x) = x \in A
+  \end{prooftree}
+\]
+\end{example}
+
+\begin{example}
+  We now proceed to define the second projection. Note that this is
+  not-so-trivial projection operation, since the result set of this operation
+  depends on the first component of the pair:
+
+  \[
+    \hinj{\snd{z}}{B(\fst{z})}{z \in
+      \bigsigmaty{x\in A}{B(x)}}
+  \]
+
+  We now have the following derivation:
+
+
+  \[
+    \begin{prooftree}
+      % set family
+      \[
+        \hsetj{B(x)}{x \in A} \quad
+        \[
+          (\inj{z}{\sigmaab})
+          \justifies
+          \fst{z} \in A
+        \]
+        \justifies
+        \setj{B(\snd{z})}
+      \]
+      \quad
+      % element
+      \inj{z}{\sigmaab}
+      \quad
+      \inj{y}{B(\fst{\langle x, y \rangle})}
+      \justifies
+      E(z,(x,y).y) \in B(\fst{z})
+    \end{prooftree}
+  \]
+
+where the last judgement can be derived as follows:
+
+\[
+  \begin{prooftree}
+    (\inj{y}{B(x)}) \quad
+    \[
+      \hsetj{B(x)}{x \in A} \quad
+      \[
+        \[
+          \[
+            (\inj{x}{A}) \quad (\inj{y}{B(x)})
+            \justifies
+            \inj{\langle x, y \rangle}{\sigmaab}
+          \]\quad
+          (\inj{x}{A})
+          \justifies
+          \eqelj{\fst{\langle x, y \rangle}}{x}{A}
+        \]
+        \justifies
+        \eqelj{x}{\fst{\langle x, y \rangle}}{A}
+      \]
+      \justifies
+      \seteqj{B(x)}{B(\fst{\langle x, y \rangle})}
+    \]
+    \justifies
+    \inj{y}{B(\fst{\langle x, y \rangle})}
+  \end{prooftree}
+\]
+
+The computation using the equality rule is showed similarly to the first
+projection.
+\end{example}
+
+\subsection{Cartesian product of a family of sets}
+
+In the same way as we constructed the disjoint union of a family of sets, we may
+as well want to create the cartesian product of a family of sets. In particular,
+given a family of sets $B(x) \mathrm{set} (x \in A)$, we write $\setj{\piab}$
+for the cartesian product of that family:
+
+\[
+  \begin{prooftree}
+  A \; \text{set} \quad \hsetj{B(x)}{x \in A}
+  \justifies
+  \setj{\piab}
+  \end{prooftree}
+\]
+
+Intuitively, an element of the set $(\Pi x \in A) B(x)$ is a tuple containing
+one element for each set in the family $B(x)$. Alternatively, one can think of
+such a tuple as an operation associating every element $a$ of the index set $A$
+to an element of the set in the family that corresponds to that element, that is
+$B(a)$. We can express such \emph{generalized} operation as
+
+\[
+  \hinj{b(x)}{B(x)}{x \in A}
+\]
+
+Such operations, following our explanation of the set, constitute
+essentially the elements of the cartesian product:
+
+\[
+  \begin{prooftree}
+  \hinj{b(x)}{B(x)}{x \in A}
+  \justifies
+  \inj{(\lambda x)b(x)}{\piab}
+  \end{prooftree}
+\]
+
+It is necessary to understand that $\hinj{b(x)}{B(x)}{x \in A}$ is an operation
+to be able to form the canonical element
+$\inj{(\lambda x)b(x)}{\pitype{x\in A}{B(x)}}$. Since, in general, there are no
+exhaustive rules for generating all operations from one set to another, it
+follows that the introduction rule above is justified by the fact that we take
+the notion of operation to be primitive.
+
+Notice that, in the special case where $x$ is not free in $B$, the family
+$\hinj{b(x)}{B}{x \in A}$ is just the usual operation from a set $A$ to a set
+$B$. In such cases, we identify the cartesian product with the type of
+operations, $\pitype{x\in A}{B(x)} \equiv A \rightarrow B$, and its elements with
+the operations from $A$ to $B$.
+
+\begin{example}
+  We can now derive the operation that usually comes with the name
+  \emph{currying}
+
+  \[
+    \textsf{curry} \in (f \in A \times B \rightarrow C) \rightarrow
+    (A \rightarrow B \rightarrow C)
+  \]
+
+  as follows
+
+  \[
+    \begin{prooftree}
+      \[
+        \[
+          \[
+            (f \in A \times B \rightarrow C)
+            \qquad
+            \[
+              (\inj{a}{A}) \qquad (\inj{b}{B})
+              \justifies
+              \inj{\pair{a}{b}}{A \times B}
+            \]
+            \justifies
+            \ap{f}{\pair{a}{b}} \in C
+          \]
+          \justifies
+          \abs{b}{\ap{f}{\pair{a}{b}}} \in B \rightarrow C
+        \]
+        \justifies
+        \abs{a}{\abs{b}{\ap{f}{\pair{a}{b}}}} \in A \rightarrow B \rightarrow C
+      \]
+      \justifies
+      \abs{f}{\abs{a}{\abs{b}{\ap{f}{\pair{a}{b}}}}} \in (f \in A \times B \rightarrow C) \rightarrow
+      (A \rightarrow B \rightarrow C)
+    \end{prooftree}
+  \]
+
+  Then, simply put $ \textsf{curry} \equiv \abs{f}{\abs{a}{\abs{b}{\ap{f}{\pair{a}{b}}}}}$.
+\end{example}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../notes"
+%%% End:
