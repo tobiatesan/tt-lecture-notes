@@ -1,0 +1,186 @@
+
+\section{Introduction}
+
+Modern day mathematics is built on top of set theory, where the existence of a
+universe of sets closed under standard operations is postulated. This approach
+has two main weak points
+
+\begin{itemize}
+\item intrinsic difficulty, due to Godel's incompleteness theorem, in showing
+  that such universe can exist at all;
+\item assumption, lacking a reasonable philosophical justification, that all
+  mathematical concepts can be reduced to a single notion, that of set, and a
+  single relation, that of membership.
+\end{itemize}
+
+Under this approach, sets are implicitly understood to exist in a static
+supernatural world, whereas mathematics, as all intellectual products, has a
+\strong{human nature} with historical and \strong{dynamic} origin.
+
+Here we consider the constructivist point of view, that has the motivation of
+providing a \strong{finer grid} to look at reality, \strong{preserving} pieces
+of information and conceptual \strong{distinctions} that would be lost of not
+considered in the classical approach. Thus constructivism should firstly be seen
+as a \strong{widening} of the scope of classical mathematics, and only
+consequently as a restriction of its foundational principles.
+
+Historically, there have been many approaches to constructivism. Our intention
+is to preserve all notions and conceptual distinctions as much as possible, thus
+leading to an arsenal of foundational principles that is reduced to a
+\strong{minimum}. In particular, we wish to
+
+\begin{itemize}
+\item preserve an effective notion of set all of whose elements are produced by
+  a finite number of rules, and to block impredicative definitions. Hence we
+  avoid the powerset axiom;
+\item preserve a positive notion of existence. Hence the underlying logic must
+  be intuitionistic;
+\item preserve the distinction between operation (algorithm, explicit procedure)
+  and function (total and single-valued relation). Hence we avoid the axiom of
+  unique choice AC! (and therefore AC), that would identify the two concepts.
+\end{itemize}
+
+An advantage of this approach is that every mathematician can recognize such
+theory as one that can be consistently extended to match his own.
+
+\subsection{Basic notions}
+
+A central concept in the philosophy of constructive mathematics is that all
+entites consist of constructions. Therefore, we wish to know and control the
+concrete content of every entity that we manipulate and statement that we
+assert. Hence, the preservation of information is of central importance.
+
+\paragraph{Sets}
+
+Here, sets have an effective nature, as opposed to axiomatic set theory:
+
+\begin{itemize}
+\item each set is specified by a finite number of rules to build all of its
+  elements;
+\item no universe of all sets is assumed to be given a priori. We say that
+  ``set'' is an \emph{open} concept.
+\end{itemize}
+
+There is a human nature in these constructions: it is we that we call some
+aggregate a set when we know how to build its elements. So to know that $X$ is a
+set is to know how to build all its elements.  There is no need to specify the
+language in which the rules are given, as soon as it can be understood by a
+reasonable mathematician. This requirement is fullfilled as soon as the set is
+described using
+
+\begin{itemize}
+\item a language that is unambiguous;
+\item a finite amount of information (such as a finite number of rules, or an
+  infinite number of them as described by a finite number of meta-level rules,
+  etc...)
+\end{itemize}
+
+Every set automatically comes with a notion of \strong{element}, which is an
+entity that can be obtained by repeated use of the rules associated with that
+set. Every set $X$ must also come equipped with a specific notion of
+\strong{equality} $=_X$, which must be an equivalence relation. Every
+mathematical entity involving elements of $X$ is expected to respect this
+equality. So in order to define a set, we need to give
+
+\begin{itemize}
+\item a finite number of rules that allow to construct all elements of the set;
+\item a notion of equality between elements of the set.
+\end{itemize}
+
+\paragraph{Quotient sets}
+
+It follows that sets are closed under \strong{quotients}: given a set $X$ and an
+equivalence relation $~$ over $X$, we can construct a set $(X,~)$ simply by
+changing $=_X$ with $~$, leaving the element-forming rules untouched.
+Consider for example the set $X^*$ of finite lists of elements of the set
+$X$. We can construct the set of finite subsets of $X$ by simply quotienting
+$X^*$ with an equivalence relation $~$ that identifies lists with the same
+elements regardless of the order of appearence or their quantity.
+
+\paragraph{Collections}
+
+We can consider objects of a certain logical type even if we have grasped what
+it means to be an object of that type, without having rules to generate all of
+them. We call these aggregates \strong{collections}, and we write $p :
+\mathcal{P}$ for an object $p$ in a collection $\mathcal{P}$. Every collection
+comes with a notion of equality preserved by all mathematical entities that
+involve objects in that collection. So to know that some aggregate is a
+collection is
+
+\begin{itemize}
+\item to have grasped what it means to be an object of that collection, and
+\item to have given a notion of equality for objects of that collection
+\end{itemize}
+
+An example of a collection is the collection $\mathcal{P}(X)$ of subsets of a
+set $X$. A simple diagonalization shows that it is impossible to generate all
+possible subsets of a set by means of a finite number of rules, so
+$\mathcal{P}(X)$ is certainly not a set. However, it is completely clear to us
+what constitues a subset of a set, and when two subsets are equal.
+
+The distinction between sets and collections has some analogy with the concepts
+of set/class in classical set theory, but different motivations, that have to do
+with
+
+\begin{itemize}
+\item the quality of information, distinguishing between effective, computable
+  domains (sets) and non-computable ones (collections);
+\item the flow of time: once a set is defined, it remains the same
+  forever. Conversely, a collection may change its contents with the time. For
+  example, the collection $\mathcal{P}(X)$ grows as we define new subsets of
+  $X$.
+\end{itemize}
+
+Hence the need for collections as an entity that is distinct from sets comes
+from the need, among others, to recognize and respect the dynamic nature of our
+mathematical world.
+
+\paragraph{Family of sets}
+
+Having described sets and collections, we now need a primitve concept for
+associating instances of these two concepts. Suppose we know that $T(x)
+\text{set} (a \in I)$, that is, that $T(x)$ yields a description of a set
+whenever $x$ is an explicit description of an element of the set $I$. We call
+this a \strong{family of sets} indexed by $I$.
+
+\paragraph{Operations}
+
+In the same way as a family of sets maps elements of an index set to sets, we
+may want to map element of a set to elements of another set. An
+\strong{operation} between a set $I$ and a set $X$, written
+$p(i) \in X (i \in I)$ is the same as a family of elements of $X$ indexed by
+$I$, that is an explicit description $p(i)$ of an element of $X$ for each
+element $i$ of $I$. Operations must preserve equality, that is, $p(i) =_X p(i')$
+whenever $i =_I i'$.
+Equality between operations is extensional, that is, we conclude $p = p'$
+whenever $p(i) =_X p'(i)$ for all $i \in I$.
+We denote by $\mathrm{Op}(I,X)$ the collection of operations between the sets
+$I$ and $X$.
+
+The difference between functions (total single-valued relations) and operations
+is clearified by a simple diagonalization argument. We have an operation $p$
+from $A$ to $B(x)$ whenever we are able to derive the judgement
+$\hinj{p(x)}{B(x)}{x \in A}$, meaning that we are able to effectively enumerate
+all operations that can be derived in our system. These are moreover total, and
+it is a well known result of computability theory that such enumeration cannot
+exhaustively enumerate all total effective functions. We therefore must conclude
+that there are strictly more functions than operations.
+
+An operation $\mathcal{O}$ from a collection $\mathcal{P}$ into a collection
+$\mathcal{Q}$ is the same as a family of objects of $\mathcal{Q}$ indexed on
+$\mathcal{P}$, i.e., an explicit description of an object $\mathcal{O}(p)$ in
+$\mathcal{Q}$ for an arbitrary $p : \mathcal{P}$. Note that $\mathcal{O}$ can be
+well-defined even if we cannot produce all its arguments. In fact, correct
+effective operations may be based only of the evidence that the argument object
+actually belongs to the indended collection. An example of this is the identity
+operation on collections.
+
+We will also consider families of objects in a collection indexed by a set, that
+is, operations $p(i) : \mathcal{P} (i \in I)$ from a set $I$ to a collection
+$\mathcal{P}$. An example of this is the operation with logical type $I
+\rightarrow \mathcal{P}(X)$ that associates every index to a subset of $X$.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../notes"
+%%% End:
