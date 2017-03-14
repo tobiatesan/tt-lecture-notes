@@ -382,12 +382,8 @@ hence we use the elimination rule of the disjoint union type to define it:
 
 \[
   \begin{prooftree}
-    \hsetj{A}{z \in \sigmaab} \quad \inj{z}{\sigmaab} \quad
-    \begin{prooftree}
-      (x \in A, y \in B(x))
-      \justifies
-      x \in A
-    \end{prooftree}
+    \setj{A} \quad \inj{z}{\sigmaab} \quad
+    (\inj{x}{A})
     \justifies
     E(z,(x,y).x) \in A
   \end{prooftree}
@@ -399,17 +395,15 @@ equality rule:
 
 \[
   \begin{prooftree}
-    \hsetj{A}{\inj{z}{\sigmaab}} \quad \inj{z}{\sigmaab} \quad
-    \begin{prooftree}
-      (x \in A, y \in B(x))
-      \justifies
-      x \in A
-    \end{prooftree}
+    \setj{A} \quad \inj{x}{A} \quad \inj{y}{B(A)} \quad
+    (\inj{x}{A})
     \justifies
-    E(z,(x,y).x) = x \in A
+    E(\pair{x}{y},(x,y).x) = x \in A
   \end{prooftree}
 \]
 \end{example}
+
+since $((x,y).x)(x) \equiv x$.
 
 \begin{example}
   We now proceed to define the second projection. Note that this is a
