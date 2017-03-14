@@ -356,8 +356,9 @@ of the canonical elements, that is, the pair.
 
 \[
   \begin{prooftree}
+    \derives{(\inj{z}{\sigmaab})}{\setj{C(z)}} \qquad
     \inj{a}{A} \qquad \inj{b}{B(a)} \qquad
-    d(x,y) \in C(\langle x, y \rangle) (x \in A, y \in B(x))
+    \derives{(x \in A,\; y \in B(x))}{d(x,y) \in C(\langle x, y \rangle)}
     \justifies
     E(\pair{a}{b},(x,y)d(x,y)) = d(a,b) \in C(\pair{a}{b})
   \end{prooftree}
