@@ -429,11 +429,7 @@ equality rule:
       % set family
       \[
         \hsetj{B(x)}{x \in A} \quad
-        \[
-          (\inj{z}{\sigmaab})
-          \justifies
-          \fst{z} \in A
-        \]
+        \derivesfrom{(\inj{z}{\sigmaab})}{\mathcal{D}_1}{\fst{z} \in A}
         \justifies
         \setj{B(\snd{z})}
       \]
@@ -441,13 +437,14 @@ equality rule:
       % element
       \inj{z}{\sigmaab}
       \quad
-      \inj{y}{B(\fst{\langle x, y \rangle})}
+      \derives{\mathcal{D}_2}{\inj{y}{B(\fst{\langle x, y \rangle})}}
       \justifies
       E(z,(x,y).y) \in B(\fst{z})
     \end{prooftree}
   \]
 
-where the last judgement can be derived as follows:
+  where the derivation $\mathcal{D}_1$ is just the one above, and
+  $\mathcal{D}_2$ is as follows:
 
 \[
   \begin{prooftree}
