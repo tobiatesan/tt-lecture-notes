@@ -323,17 +323,26 @@ equal (possibly non-canonical) elements:
   \end{prooftree}
 \]
 
-The elimination rule introduces the eliminator $E$:
+The \strong{elimination rule} introduces the eliminator $E$:
 
 \[
   \begin{prooftree}
-    \hsetj{C(z)}{\inj{z}{\textstyle{\sum}_{x\in A}B(x)}}\qquad
-    z \in \sigmaab \quad
-    d(x,y) \in C(\langle x, y \rangle) (x \in A, y \in B(x))
+    \derives{(\inj{z}{\sigmaab})}{\setj{C(z)}} \qquad
+    z \in \sigmaab \qquad
+    \derives{(x \in A, \; y \in B(x))}{\inj{d(x,y)}{C(\langle x, y \rangle)}}
     \justifies
     E(z,(x,y)d(x,y)) \in C(z)
   \end{prooftree}
 \]
+
+We can justify the elimination rule by explaining the semantics of the
+eliminator $E$: it first executes $z$, which by hypothesis will yield a
+canonical element of type $\sigmaab$, that is, a pair $\pair{a}{b}$ with
+$\inj{a}{A}$ and $\inj{b}{B(a)}$. Then, it substitutes $a$ and $b$ for $x$ and
+$y$ in $d$. Executing $d(a,b)$ will return a canonical element $e$ of
+$C(\pair{a}{b})$. Since $\pair{a}{b}$ is the normal form of $z$, it follows that
+$\eqelj{z}{\pair{a}{b}}{\sigmaab}$, so since type families respect equality, we
+have that $\inj{e}{C(z)}$, which is what we wanted.
 
 The second elimination rule tells us how the eliminator symbol respects equality
 of the entities involved.
@@ -353,6 +362,9 @@ of the canonical elements, that is, the pair.
     E(\pair{a}{b},(x,y)d(x,y)) = d(a,b) \in C(\pair{a}{b})
   \end{prooftree}
 \]
+
+The equality rule above is justified by the very definition that we just gave
+for the eliminator $E$.
 
 \begin{example}
   
