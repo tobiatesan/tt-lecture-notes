@@ -323,17 +323,26 @@ equal (possibly non-canonical) elements:
   \end{prooftree}
 \]
 
-The elimination rule introduces the eliminator $E$:
+The \strong{elimination rule} introduces the eliminator $E$:
 
 \[
   \begin{prooftree}
-    \hsetj{C(z)}{\inj{z}{\textstyle{\sum}_{x\in A}B(x)}}\qquad
-    z \in \sigmaab \quad
-    d(x,y) \in C(\langle x, y \rangle) (x \in A, y \in B(x))
+    \derives{(\inj{z}{\sigmaab})}{\setj{C(z)}} \qquad
+    z \in \sigmaab \qquad
+    \derives{(x \in A, \; y \in B(x))}{\inj{d(x,y)}{C(\langle x, y \rangle)}}
     \justifies
     E(z,(x,y)d(x,y)) \in C(z)
   \end{prooftree}
 \]
+
+We can justify the elimination rule by explaining the semantics of the
+eliminator $E$: it first executes $z$, which by hypothesis will yield a
+canonical element of type $\sigmaab$, that is, a pair $\pair{a}{b}$ with
+$\inj{a}{A}$ and $\inj{b}{B(a)}$. Then, it substitutes $a$ and $b$ for $x$ and
+$y$ in $d$. Executing $d(a,b)$ will return a canonical element $e$ of
+$C(\pair{a}{b})$. Since $\pair{a}{b}$ is the normal form of $z$, it follows that
+$\eqelj{z}{\pair{a}{b}}{\sigmaab}$, so since type families respect equality, we
+have that $\inj{e}{C(z)}$, which is what we wanted.
 
 The second elimination rule tells us how the eliminator symbol respects equality
 of the entities involved.
@@ -342,17 +351,21 @@ of the entities involved.
 TODO...
 \]
 
-The equality rules tells us the semantics of the eliminator symbol when acting
+The equality rule tells us the semantics of the eliminator symbol when acting
 of the canonical elements, that is, the pair.
 
 \[
   \begin{prooftree}
+    \derives{(\inj{z}{\sigmaab})}{\setj{C(z)}} \qquad
     \inj{a}{A} \qquad \inj{b}{B(a)} \qquad
-    d(x,y) \in C(\langle x, y \rangle) (x \in A, y \in B(x))
+    \derives{(x \in A,\; y \in B(x))}{d(x,y) \in C(\langle x, y \rangle)}
     \justifies
     E(\pair{a}{b},(x,y)d(x,y)) = d(a,b) \in C(\pair{a}{b})
   \end{prooftree}
 \]
+
+The equality rule above is justified by the very definition that we just gave
+for the eliminator $E$.
 
 \begin{example}
   
@@ -369,12 +382,8 @@ hence we use the elimination rule of the disjoint union type to define it:
 
 \[
   \begin{prooftree}
-    \hsetj{A}{z \in \sigmaab} \quad \inj{z}{\sigmaab} \quad
-    \begin{prooftree}
-      (x \in A, y \in B(x))
-      \justifies
-      x \in A
-    \end{prooftree}
+    \setj{A} \quad \inj{z}{\sigmaab} \quad
+    (\inj{x}{A})
     \justifies
     E(z,(x,y).x) \in A
   \end{prooftree}
@@ -386,20 +395,18 @@ equality rule:
 
 \[
   \begin{prooftree}
-    \hsetj{A}{\inj{z}{\sigmaab}} \quad \inj{z}{\sigmaab} \quad
-    \begin{prooftree}
-      (x \in A, y \in B(x))
-      \justifies
-      x \in A
-    \end{prooftree}
+    \setj{A} \quad \inj{x}{A} \quad \inj{y}{B(A)} \quad
+    (\inj{x}{A})
     \justifies
-    E(z,(x,y).x) = x \in A
+    E(\pair{x}{y},(x,y).x) = x \in A
   \end{prooftree}
 \]
 \end{example}
 
+since $((x,y).x)(x) \equiv x$.
+
 \begin{example}
-  We now proceed to define the second projection. Note that this is
+  We now proceed to define the second projection. Note that this is a
   not-so-trivial projection operation, since the result set of this operation
   depends on the first component of the pair:
 
@@ -416,11 +423,7 @@ equality rule:
       % set family
       \[
         \hsetj{B(x)}{x \in A} \quad
-        \[
-          (\inj{z}{\sigmaab})
-          \justifies
-          \fst{z} \in A
-        \]
+        \derivesfrom{(\inj{z}{\sigmaab})}{\mathcal{D}_1}{\fst{z} \in A}
         \justifies
         \setj{B(\snd{z})}
       \]
@@ -428,26 +431,23 @@ equality rule:
       % element
       \inj{z}{\sigmaab}
       \quad
-      \inj{y}{B(\fst{\langle x, y \rangle})}
+      \derivesfrom{(\inj{x}{A}, \; \inj{y}{B(x)})}{\mathcal{D}_2}{\inj{y}{B(\fst{\langle x, y \rangle})}}
       \justifies
       E(z,(x,y).y) \in B(\fst{z})
     \end{prooftree}
   \]
 
-where the last judgement can be derived as follows:
+  where the derivation $\mathcal{D}_1$ is just the one above, and
+  $\mathcal{D}_2$ is as follows:
 
 \[
   \begin{prooftree}
     (\inj{y}{B(x)}) \quad
     \[
-      \hsetj{B(x)}{x \in A} \quad
+      \derives{(\inj{x}{A})}{\setj{B(x)}} \quad
       \[
         \[
-          \[
-            (\inj{x}{A}) \quad (\inj{y}{B(x)})
-            \justifies
-            \inj{\langle x, y \rangle}{\sigmaab}
-          \]\quad
+          (\inj{x}{A}) \quad (\inj{y}{B(x)}) \quad
           (\inj{x}{A})
           \justifies
           \eqelj{\fst{\langle x, y \rangle}}{x}{A}
@@ -463,8 +463,54 @@ where the last judgement can be derived as follows:
   \end{prooftree}
 \]
 
+Now, as with the first projection, we want to verify (and actually derive in the
+theory) that the so-defined second projection does what we expect, namely:
+
+\[
+  \eqelj{\snd{\pair{a}{b}}}{b}{B(a)}
+\]
+
 The computation using the equality rule is showed similarly to the first
-projection.
+projection:
+
+{
+  \small{
+    \[
+      \begin{prooftree}
+        \[
+          \derives{(\inj{x}{A})}{\setj{B(x)}} \quad
+          \eqelj{\fst{\pair{a}{b}}}{a}{A}
+          \justifies
+          \seteqj{B(\fst{\pair{a}{b}})}{B(a)}
+        \]
+        \quad
+        \[
+          \inj{a}{A} \qquad \inj{b}{B(a)} \quad
+          \[
+            \[
+              \derives{(\inj{x}{A})}{\setj{B(x)}} \quad
+              \[
+                \eqelj{\fst{\pair{a}{b}}}{a}{A}
+                \justifies
+                \eqelj{a}{\fst{\pair{a}{b}}}{A}
+              \]
+              \justifies
+              \seteqj{B(a)}{B(\fst{\pair{a}{b}})}
+            \]
+            \quad \inj{b}{B(a)}
+            \justifies
+            \inj{b}{B(\fst{\pair{a}{b}})}
+          \]
+          \justifies
+          \eqelj{\snd{\pair{a}{b}}}{b}{B(\fst{\pair{a}{b}})}
+        \]
+        \justifies
+        \eqelj{\snd{\pair{a}{b}}}{b}{B(a)}
+      \end{prooftree}
+    \]
+  }
+}
+
 \end{example}
 
 \subsection{Cartesian product of a family of sets}
