@@ -444,14 +444,10 @@ since $((x,y).x)(x) \equiv x$.
   \begin{prooftree}
     (\inj{y}{B(x)}) \quad
     \[
-      \hsetj{B(x)}{x \in A} \quad
+      \derives{(\inj{x}{A})}{\setj{B(x)}} \quad
       \[
         \[
-          \[
-            (\inj{x}{A}) \quad (\inj{y}{B(x)})
-            \justifies
-            \inj{\langle x, y \rangle}{\sigmaab}
-          \]\quad
+          (\inj{x}{A}) \quad (\inj{y}{B(x)}) \quad
           (\inj{x}{A})
           \justifies
           \eqelj{\fst{\langle x, y \rangle}}{x}{A}
@@ -467,8 +463,54 @@ since $((x,y).x)(x) \equiv x$.
   \end{prooftree}
 \]
 
+Now, as with the first projection, we want to verify (and actually derive in the
+theory) that the so-defined second projection does what we expect, namely:
+
+\[
+  \eqelj{\snd{\pair{a}{b}}}{b}{B(a)}
+\]
+
 The computation using the equality rule is showed similarly to the first
-projection.
+projection:
+
+{
+  \small{
+    \[
+      \begin{prooftree}
+        \[
+          \derives{(\inj{x}{A})}{\setj{B(x)}} \quad
+          \eqelj{\fst{\pair{a}{b}}}{a}{A}
+          \justifies
+          \seteqj{B(\fst{\pair{a}{b}})}{B(a)}
+        \]
+        \quad
+        \[
+          \inj{a}{A} \qquad \inj{b}{B(a)} \quad
+          \[
+            \[
+              \derives{(\inj{x}{A})}{\setj{B(x)}} \quad
+              \[
+                \eqelj{\fst{\pair{a}{b}}}{a}{A}
+                \justifies
+                \eqelj{a}{\fst{\pair{a}{b}}}{A}
+              \]
+              \justifies
+              \seteqj{B(a)}{B(\fst{\pair{a}{b}})}
+            \]
+            \quad \inj{b}{B(a)}
+            \justifies
+            \inj{b}{B(\fst{\pair{a}{b}})}
+          \]
+          \justifies
+          \eqelj{\snd{\pair{a}{b}}}{b}{B(\fst{\pair{a}{b}})}
+        \]
+        \justifies
+        \eqelj{\snd{\pair{a}{b}}}{b}{B(a)}
+      \end{prooftree}
+    \]
+  }
+}
+
 \end{example}
 
 \subsection{Cartesian product of a family of sets}
