@@ -6,7 +6,7 @@
 \RequirePackage{dsfont}
 \RequirePackage{amsthm}
 \RequirePackage{hyperref}
-\input{prooftree.sty}
+\RequirePackage{prooftree}
 \RequirePackage{mathpazo}
 
 \theoremstyle{definition}
