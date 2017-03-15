@@ -1,0 +1,79 @@
+\section{Propositions}
+The notion of proposition is open. In particular, it does not coincide with the traditional notion of formula in a fixed formal language. A proposition is any expression (in any language) which can be asserted to hold, or to be true, and for which we understand what is required to make it true. A proposition may depend on a number of variables, or arguments, each variable ranging in its specific domain, that can be either a set or a collection. In the latter case actually we should use the term \textit{propositional family} since a proposition is a \textit{proposition} only when each argument is specified in the actual domain. 
+
+Of course, once one has fixed a domain, a proposition $\Psi(x)$ must respect equality, as stated by the following substitution rule:
+\[
+	\begin{prooftree}
+		\Psi(x)\quad
+		x =_{X} y
+		\justifies
+		\Psi(y)
+	\end{prooftree}
+\]
+
+Actually, this equality constraint is a very good instance of a propositional family. Here, for every set $X$, \textit{x $=_{X}$ y} is a propositional family with two arguments. Fixing $X$ leads to a proposition.
+
+As usual, we may compose different propositions to obtain new ones. That is made possible by using the usual \textit{logical connectives} and \textit{quantifiers}, i.e. the following:
+\begin{itemize}
+	\item \textbf{Connectives}:
+	\begin{itemize}
+		\item $\wedge$, or \textbf{and, conjunction}
+		\item $\vee$, or \textbf{or, disjunction}
+		\item $\supset$, or \textbf{implies, implication}
+		\item $\neg$, or \textbf{not, negation}
+	\end{itemize}
+	\item \textbf{Quantifiers}:
+	\begin{itemize}
+		\item $\exists$, or \textbf{there exists, existential}
+		\item $\forall$, or \textbf{for all, universal}
+	\end{itemize}
+\end{itemize}
+
+And we may eventually even use induction, as specified by this formation rule:
+\[
+	\begin{prooftree}
+		a \in S \quad
+		U : \mathcal{P}S
+		\justifies
+		R(a,U)
+	\end{prooftree}
+\]
+Where S is supposed to be a set and \textit{U : $\mathcal{P}$S} means U is in the collection $\mathcal{P}$S obtained from the set S.
+
+The classical logic is based on the notion of truth. Everything is either \textit{true} or \textit{false} (i.e. \textit{not true}), and the truth of a statement is ''absolute'', in the meaning it is independent of any reasoning. Contrariwise, in the \textbf{intuitionistic logic} judgments about statements are no longer based on any predefined value of that statement, but on the existence of a proof or ''construction'' of that statement. That is, a propositions ''holds'' if exists a proof, constructed by us, of that proposition. Under this completely different point of view the following rules explain the informal constructive semantics of propositional connectives and quantifiers:
+\begin{itemize}
+	\item A construction of $\Psi\wedge\Phi$ consists of a construction of $\Psi$ and a construction of $\Phi$;
+	\item A construction of $\Psi_{1} \vee \Psi_{2}$ consists of a number $i \in {1, 2}$ and a construction of $\Psi_{i}$;
+	\item A construction of $\Psi_{1} \supset \Psi_{2}$ is a method transforming every construction of $\Psi_{1}$ into a construction of $\Psi_{2}$;
+	\item There is no possible construction of $\perp$ (where $\perp$ denotes falsity);
+	\item From $\perp$ one may infer everything;
+	\item A construction of $\neg\Psi$ is a method that turns every construction of $\Psi$ into a non-existent object. That is, actually $\neg\Psi$ is just an abbreviation of an implication $\Psi \supset \perp$;
+	\item One may infer $\Psi$ from $\chi\wedge\Phi$ iff one may infer $\Phi \supset \Psi$ from $\chi$;
+	\item A construction of $(\Phi \vee \Psi) \supset \chi$ is a construction of $\Phi \supset \chi$ and $\Psi \supset \chi$;
+	\item For any set $X$, a construction of $(\exists x \in X)\Psi(x)$ exists if and only if there exists (in the sense that one can produce) an element $d \in X$ such that $\Psi(d)$ holds;
+	\item For any set $X$, a construction of $(\forall x \in X)\Psi(x)$ exists if and only if $\Psi(d)$ holds for every $d \in X$;
+	\item For any collection $\mathcal{P}$, a construction of $(\exists p : P)\Psi(p)$ exists if and only if there exists an object $q : \mathcal{P}$ such that $\Psi(q)$ holds;
+	\item For any collection $\mathcal{P}$, a construction of $(\forall p \in \mathcal{P})\Psi(p)$ exists if and only if $\Psi(q)$ holds for every $q : \mathcal{P}$.
+\end{itemize}
+As we shall see, this informal explanation may be expressed in terms of rules, and those rules may be interpreted (and hence used) by a computer.
+
+Note that the equivalence between $\neg\Psi$ and $\Psi\supset\perp$ holds also in classical logic. But note also that the intuitionistic statement $\neg\Psi$ is much stronger than just ''there is no construction for $\Psi$''.
+\begin{example}
+	Consider the following two propositions:
+	\begin{enumerate}
+		\item $\Psi\supset\neg\neg\Psi$
+		\item $\neg\neg\Psi\supset\Psi$
+	\end{enumerate}
+	They are classical tautologies, and in classical logic there is a symmetry between 1 and 2. The former, which should be written as $\Psi\supset((\Psi\supset\perp)\supset\perp)$ has also an interpretation in intuitionistic logic, as follows:
+	\begin{center}
+		Given a proof of $\Psi$, here is a proof of $(\Psi\supset\perp)\supset\perp$: Take a proof of $\Psi\supset\perp$. It is a method to translate proofs of $\Psi$ into proofs of $\perp$. Since we have a proof of $\Psi$, we can use this method to obtain a proof of $\perp$.
+	\end{center}
+	On the other hand, for the latter there isn't such a construction. Hence, it is no more true in intuitionistic logic.
+\end{example}
+
+
+A proposition is said to be \textit{proper} when all the quantifiers which appear in it range only on sets. So a proposition is proper also if it contains some arguments in a collection, but they are not quantified. The distinction between arbitrary and proper propositions is important constructively, because only the former admits a computational interpretation on a finite number of rules. Further, a proper proposition which is true today will remain true forever. On the other hand, a not proper proposition might be true today and false tomorrow, since a collection doesn't have a fixed number of rules. For instance, $(\forall D : \mathcal{P}X)\Phi(D)$ might be true today and may become false when another subset, for which $\Phi$ is false, is added.
+
+Propositions, and proper propositions as well, form a collection; two propositions $\Psi$ and $\Phi$, are considered to be equal when they are \textit{logically equivalent}, that is, $\Psi$ holds if and only if $\Phi$ holds, or equivalently when both $\Psi$ and $\Phi$ hold. This is written as $\Psi \iff \Phi$. 
+
+
