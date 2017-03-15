@@ -5,10 +5,13 @@
 \RequirePackage{amssymb}
 \RequirePackage{dsfont}
 \RequirePackage{amsthm}
-\RequirePackage{hyperref}
 \RequirePackage{prooftree}
 \RequirePackage{mathpazo}
-
+\RequirePackage{hyperref}
+\hypersetup{
+    pdftex,
+    pdfpagemode=UseOutlines
+}
 \theoremstyle{definition}
 \newtheorem{example}{Example}[section]
 \newtheorem{exercise}{Exercise}[section]
