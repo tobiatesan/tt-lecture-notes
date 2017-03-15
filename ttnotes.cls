@@ -5,6 +5,7 @@
 \RequirePackage{amssymb}
 \RequirePackage{dsfont}
 \RequirePackage{amsthm}
+\RequirePackage{hyperref}
 \input{prooftree.sty}
 \RequirePackage{mathpazo}
 
