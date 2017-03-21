@@ -1,6 +1,8 @@
 default:
-	pdflatex notes.tex
-	pdflatex notes.tex
+	pdflatex notes
+	bibtex notes
+	pdflatex notes
+	pdflatex notes
 
 clean:
-	rm -vf *.pdf *.log *.aux *.toc
+	rm -vf *.pdf *.log *.aux *.toc *.bbl *.blg

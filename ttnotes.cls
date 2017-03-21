@@ -8,6 +8,7 @@
 \RequirePackage{prooftree}
 \RequirePackage{mathpazo}
 \RequirePackage{hyperref}
+\RequirePackage{cite}
 \hypersetup{
     pdftex,
     pdfpagemode=UseOutlines
