@@ -8,6 +8,7 @@
 \RequirePackage{prooftree}
 \RequirePackage{mathpazo}
 \RequirePackage{hyperref}
+\RequirePackage{mdframed}
 \RequirePackage{cite}
 \hypersetup{
     pdftex,
