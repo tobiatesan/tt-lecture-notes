@@ -56,3 +56,14 @@
 
 \newcommand{\ttrue}{\textsf{true}}
 \newcommand{\ffalse}{\textsf{false}}
+
+\newcommand{\tyj}[2]{#1 \, : \, #2}
+\newcommand{\inleft}[2]{\textsf{inl}_{#1}(#2)}
+\newcommand{\inright}[2]{\textsf{inr}_{#1}(#2)}
+\newcommand{\casedisj}[3]{\textsf{case}(#1, #2, #3)}
+\newcommand{\unpack}[2]{\textsf{unpack}(#1, #2)}
+\newcommand{\abort}[2]{\textsf{abort}_{#1}(#2)}
+
+\newcommand{\ctxtj}[1]{#1 \, \text{cont}}
+\newcommand{\gammactxt}{\Gamma \, \text{cont}}
+\newcommand{\propj}[1]{#1 \, \text{prop}}
