@@ -1,0 +1,706 @@
+\section{Proof terms and the Curry-Howard isomorphism}
+
+\subsection{Historical notes (WIP)}
+
+The term ``Curry-Howard isomorphism'', also stated as the slogans ``propositions
+as types'' or ``proofs as programs'', originally refers to a strong
+correspondence between formal systems of constructive logic and typed lambda
+calculi, and in a more general and modern view, between proof theory and
+theoretical computer science.
+
+The BHK interpretation of intuitionistic logic was already a hint towards this
+idea (although the formulas-as-types paradigm is only one of the possible
+incarnations of BHK, among others such as Kleene's realizability semantics).
+The first explicit statement was made by Curry in the 40s, and the
+correspondence was made precise for typed combinatory logic by Curry and Feys in
+their milestone monograph \cite{curry1958combinatory}, in the form of theorems
+giving a connection between provability and type inhabitation.
+
+The works of Curry, however, accounts only for one aspect of the isomorphism,
+namely the \emph{static} correspondence between propositions and types, as well
+as proof terms and $\lambda$-terms (or combinators). The other important aspect
+is \emph{dynamic}, and relates proof normalization in natural deduction and term
+reduction (computation) in typed lambda calculi. W. W. Tait is often credited
+for the discovery of this dynamic aspect of the correspondence, but an explicit
+statement of it did not occur until 1969, when the famous paper by Howard began
+to be privately circulated (it was actually published only in 1980). In
+\cite{howard:tfatnoc}, explicit emphasis on the relationship between reduction
+and normalization is made.
+
+Despite the isomorphism being associated with Curry and Howard, the work by
+N. G. De Bruijn on its tool Automath \cite{aut-001-1} represented a huge
+contribution, and was the first example of making an actual practical use of the
+ideas underlying the isomorphism. Automath was developed as a proof assistant
+for writing mathematical proofs so that they could be verified by a
+computer. Many fundamental concepts were for the first time used here, such as
+dependent types, with implication defined as a special case of the universal
+quantifier.
+
+The ultimate development of the isomorphism came with the work of Per
+Martin-Loef and its Intuitionistic Type Theory: the correspondence between
+propositions and types is brought to an extreme, to the point where propositions
+are \emph{identified} with types. In the following years, type theories, proof
+assistants and programming languages have been created following the idea of the
+Curry-Howard isomorphism, and inspired especially by Martin-Loef’s work. Notable
+examples are Coquand and Huet’s Calculus of Constructions \cite{COQUAND198895},
+the proof assistants Coq and Lego, and the dependently typed functional
+programming languages Agda \cite{Norell:2009:DTP:1481861.1481862} and Idris.
+
+From the point of view of categorical semantics, we discover yet another side of
+the same correspondence. Objects and morphisms correspond to types and terms,
+and also to formulas and proofs. This analogy was first discovered by Lawvere
+and Lambek, to that the correspondence is sometimes stated as the
+Curry-Howard-Lambek isomorphism. TODO: computational trinitarianism.
+
+
+\subsection{Multi-sorted natural deduction with explicit context}
+
+We now introduce explicit contexts, and see how they can be defined. In
+particular, we are going to introduce a new judgement
+
+\[
+  \gammactxt
+\]
+
+and explain how it can be derived:
+
+\[
+  \ctxtj{[]}
+  \qquad
+  \begin{prooftree}
+    \Gamma \vdash \propj{\varphi}
+    \justifies
+    \ctxtj{\Gamma, \tyj{u}{\varphi}}
+    \using{\tyj{u}{\varphi} \text{ not in } \Gamma}
+  \end{prooftree}
+  \qquad
+  \begin{prooftree}
+    \Gamma \vdash \setj{A}
+    \justifies
+    \ctxtj{\Gamma, \inj{x}{A}}
+    \using{\inj{x}{A} \text{ not in } \Gamma}
+  \end{prooftree}
+\]
+
+that is, our contexts may contain hypotheses on the existence of elements of
+sets and proofs of propositions, must the \emph{name} or \emph{tag} of each
+hypothesis must be unique in the context. This restriction ensures that when an
+assumption is removed from the context, it gets actually \emph{discharged} in
+the sense that it cannot be used further in the derivation.  The most basic use
+of an assumption is to assert it: if we assume $x$ is a proof of a proposition
+$A$, then we are entitled to assert that $A$ is true, hence
+
+\[
+  \begin{prooftree}
+    \ctxtj{\Gamma, \tyj{x}{\varphi}}
+    \justifies
+    \Gamma, \tyj{x}{\varphi} \vdash \varphi
+  \end{prooftree}
+\]
+
+In the same way, if we assume that $\inj{x}{A}$, we may as well assert it:
+
+\[
+  \begin{prooftree}
+    \ctxtj{\Gamma, \inj{x}{A}}
+    \justifies
+    \Gamma, \inj{x}{A} \vdash \inj{x}{A}
+  \end{prooftree}
+\]
+
+The complete natural deduction system for multi-sorted first-order
+intuitionistic logic with explicit contexts is shown in
+Figure~\ref{natded-explicit-context}.
+
+\begin{figure}[ht]
+\begin{mdframed}
+
+  \[
+    \begin{prooftree}
+      \Gamma \vdash A \qquad \Gamma \vdash B
+      \justifies
+      \Gamma \vdash A \wedge B
+    \end{prooftree}
+    \qquad
+    \begin{prooftree}
+      \Gamma \vdash A \wedge B
+      \justifies
+      \Gamma \vdash A
+    \end{prooftree}
+    \qquad
+    \begin{prooftree}
+      \Gamma \vdash A \wedge B
+      \justifies
+      \Gamma \vdash B
+    \end{prooftree}
+  \]
+
+  \[
+    \begin{prooftree}
+      \Gamma \vdash A
+      \justifies
+      \Gamma \vdash A \vee B
+    \end{prooftree}
+    \qquad
+    \begin{prooftree}
+      \Gamma \vdash B
+      \justifies
+      \Gamma \vdash A \vee B
+    \end{prooftree}
+    \qquad
+    \begin{prooftree}
+      \Gamma \vdash A \vee B
+      \quad
+      \Gamma, \tyj{u}{A} \vdash C
+      \quad
+      \Gamma, \tyj{v}{B} \vdash C
+      \justifies
+      \Gamma \vdash C
+    \end{prooftree}
+  \]
+
+  \[
+    \begin{prooftree}
+      \Gamma, \tyj{u}{A} \vdash B
+      \justifies
+      \Gamma \vdash A \supset B
+    \end{prooftree}
+    \qquad
+    \begin{prooftree}
+      \Gamma \vdash A \supset B \qquad \Gamma \vdash A
+      \justifies
+      \Gamma \vdash B
+    \end{prooftree}
+  \]
+
+  \[
+    \begin{prooftree}
+      \Gamma, \inj{x}{A} \vdash \propj{\varphi(x)}
+      \quad
+      \Gamma, \inj{x}{A} \vdash \varphi(x)
+      \justifies
+      \Gamma \vdash (\forall x \in A) \varphi(x)
+    \end{prooftree}
+    \qquad
+    \begin{prooftree}
+      \Gamma \vdash (\forall \inj{x}{A}) \varphi(x)
+      \quad
+      \Gamma \vdash \inj{t}{A}
+      \justifies
+      \Gamma \vdash \varphi(t)
+    \end{prooftree}
+  \]
+
+  \[
+    \begin{prooftree}
+      \Gamma \vdash \varphi(t)
+      \qquad
+      \Gamma \vdash \inj{t}{A}
+      \justifies
+      \Gamma \vdash (\exists \inj{x}{A}) \varphi(x)
+    \end{prooftree}
+    \qquad
+    \begin{prooftree}
+      \Gamma \vdash (\exists \inj{x}{A}) \varphi(x)
+      \qquad
+      \Gamma, \inj{x}{A}, \tyj{y}{A(x)} \vdash B
+      \justifies
+      \Gamma \vdash B
+    \end{prooftree}
+  \]
+  \[
+    \begin{prooftree}
+      \justifies
+      \Gamma \vdash \top
+    \end{prooftree}
+    \qquad\qquad\qquad
+    \begin{prooftree}
+      \Gamma \vdash \bot
+      \justifies
+      \Gamma \vdash A
+    \end{prooftree}
+  \]
+\end{mdframed}
+\caption{\label{natded-explicit-context} Natural deduction with explicit context.}
+\end{figure}
+
+\begin{example}
+  We show how the intuitionistically valid formula
+
+  \[
+    \varphi \vee (\forall x \in A)\psi(x) \rightarrow
+    (\forall x \in A)(\varphi \vee \psi(x))
+  \]
+
+  can be derived in our system, where $x$ is intended to be \emph{not} free in
+  $\varphi$.
+
+  \[
+    \begin{prooftree}
+      \[
+        \[
+          \Gamma \vdash \varphi \vee (\forall x \in A)\psi (x) \quad 
+          \[
+            \Gamma, \varphi \vdash \varphi
+            \justifies
+            \Gamma, \varphi \vdash \varphi \vee \psi (x)
+          \]
+          \[
+            \[
+              \Delta \vdash (\forall x \in A)\psi (x) \quad 
+              \Delta \vdash x \in A
+              \justifies
+              \Delta \vdash \psi (x)
+            \]
+            \justifies
+            \Delta \equiv \Gamma, (\forall x \in A)\psi (x) \vdash \varphi \vee \psi (x)
+          \]
+          \justifies
+          \Gamma \equiv \varphi \vee (\forall x \in A)\psi (x), x \in A \vdash \varphi \vee \psi (x)
+        \]
+        \justifies
+        \varphi \vee (\forall x \in A)\psi (x) \vdash (\forall x \in A)(\varphi \vee \psi (x))
+      \]
+      \justifies
+      \varphi \vee (\forall x \in A)\psi (x) \rightarrow (\forall x \in A)(\varphi \vee \psi (x))
+    \end{prooftree}
+  \]
+\end{example}
+
+\begin{example}
+  We have seen that, in the system of natural deduction with implicit
+  hypotheses, we must pay attention to the parameters involved in the rules of
+  $\forall$ introduction and $\exists$ elimination in order to avoid logical
+  absurdities to be derived. The alert reader may have noticed that there are no
+  side conditions of this sort in the rules with explicit contexts. This is
+  because the definition of context itself, which disallows the presence of
+  variables with the same name, takes care of such situations. As an example,
+  notice how the derivation of the invalid $\forall xy (P(x) \rightarrow P(y))$
+  gets blocked:
+
+  \[
+    \begin{prooftree}
+      \[
+        \[
+          \[ \justifies x \in A, y \in A, u : P(x) \vdash y \in A \] \quad 
+          \[
+            x \in A, y \in A, u : P(x), z \in A \vdash P(z)
+            \justifies
+            x \in A, y \in A, u : P(x) \vdash (\forall x \in A)P(x)
+          \]
+          \justifies
+          x \in A, y \in A, u : P(x) \vdash P(y)
+        \]
+        \justifies
+        x \in A, y \in A \vdash P(x) \rightarrow P(y)
+      \]
+      \justifies
+      \vdash (\forall x \in A)(\forall y \in A)(P(x) \rightarrow P(y))
+    \end{prooftree}
+  \]
+
+  Notice how there is no way to complete the right branch: we would be able to
+  derive it only in the case $x = z$, but this is not possible by the definition
+  of context, which requires the $\forall$ introduction rule to refer to a fresh
+  variable (in this case, $z$).
+
+\end{example}
+
+\subsection{Proof terms}
+
+We write $\Gamma \vdash M : A$ to express the judgement ``$M$ is a \emph{proof
+  term} for the proposition $A$ under the hypotheses $\Gamma$''. We extend our
+definition of contexts to allow assumptions about proof of propositions:
+
+\[
+  \begin{prooftree}
+    \Gamma \vdash \propj{A}
+    \justifies
+    \ctxtj{\Gamma, \tyj{x}{A}}
+    \using{\tyj{x}{A} \text{ not in } \Gamma}
+  \end{prooftree}
+\]
+
+We know what counts as a proof of the proposition $A \wedge B$, namely a
+proof of $A$ and a proof of $B$. It makes sense for a proof term for the
+conjunction, therefore, to be a pair of proofs, one of $A$ and one of $B$:
+
+\[
+  \begin{prooftree}
+    \Gamma \vdash \tyj{M}{A} \qquad \Gamma \vdash \tyj{N}{B}
+    \justifies
+    \Gamma \vdash \tyj{\pair{M}{N}}{A \wedge B}
+  \end{prooftree}
+\]
+
+Then, it seems reasonable to extract the first or second of this pair of proofs
+by projection:
+
+\[
+  \begin{prooftree}
+    \Gamma \vdash \tyj{M}{A \wedge B}
+    \justifies
+    \Gamma \vdash \tyj{\snd{M}}{B}
+  \end{prooftree}
+  \qquad
+  \begin{prooftree}
+    \Gamma \vdash \tyj{M}{A \wedge B}
+    \justifies
+    \Gamma \vdash \tyj{\fst{M}}{A}
+  \end{prooftree}
+\]
+
+A proof of a disjunction $A \vee B$ is a proof of $A$ or a proof of $B$,
+together with the information telling us \emph{which one} of the two. The proof
+term then is the proof itself, with \emph{tags} telling us whether the proof
+refers to the first or the second disjunct, and what is the disjunct about which
+we are not saying anything:
+
+\[
+  \begin{prooftree}
+    \Gamma \vdash \tyj{M}{A}
+    \justifies
+    \Gamma \vdash \tyj{\inleft{B}{M}}{A \vee B}
+  \end{prooftree}
+  \qquad
+  \begin{prooftree}
+    \Gamma \vdash \tyj{M}{B}
+    \justifies
+    \Gamma \vdash \tyj{\inright{A}{M}}{A \vee B}
+  \end{prooftree}
+\]
+
+A proof of a disjunction is used by \emph{reading} the information on the term
+itself, and proving the conclusion by case analysis.
+
+\[
+  \begin{prooftree}
+    \Gamma \vdash \tyj{M}{A \vee B}
+    \qquad
+    \Gamma, \tyj{x}{A} \vdash \tyj{N_1}{C}
+    \qquad
+    \Gamma, \tyj{y}{B} \vdash \tyj{N_2}{C}
+    \justifies
+    \Gamma \vdash \tyj{\casedisj{M}{(x)N_1}{(y)N_2}}{C}
+  \end{prooftree}
+\]
+
+A proof of an implication $\varphi \supset \psi$ is understood to be a method,
+or operation, that yields a proof of $\psi$ given a proof of
+$\varphi$.
+
+\[
+  \begin{prooftree}
+    \Gamma, \tyj{x}{\varphi} \vdash \tyj{b(x)}{\psi}
+    \justifies
+    \Gamma \vdash \tyj{\lambda_{\supset} x . b(x)}{\varphi \supset \psi}
+  \end{prooftree}
+  \qquad
+  \begin{prooftree}
+    \Gamma \vdash \tyj{M}{A \supset B}
+    \qquad
+    \Gamma \vdash \tyj{N}{A}
+    \justifies
+    \Gamma \vdash \tyj{\ap{M}{N}}{B}
+  \end{prooftree}
+\]
+
+A similar situation is with universal quantification: a proof of
+$(\forall \inj{x}{A})\varphi (x)$ is an operation that yields a proof of
+$\varphi(x)$ given an element $x$ of the set $A$.
+
+\[
+  \begin{prooftree}
+    \Gamma, x \in A \vdash \propj{\varphi(x)}
+    \qquad
+    \Gamma, x \in A \vdash \tyj{b(x)}{\varphi (x)}
+    % \Gamma \vdash \tyj{M}{A[w/x]}
+    \justifies
+    \Gamma \vdash \tyj{\lambda_{\forall} w . b(x)}{(\forall x A)\varphi(x)}
+    % \using{w \notin \mathrm{FV}(\Gamma)}
+  \end{prooftree}
+\]
+\[
+  \begin{prooftree}
+    \Gamma \vdash \inj{t}{A}
+    \qquad
+    \Gamma \vdash \tyj{M}{(\forall x A)\varphi(x)}
+    \justifies
+    \Gamma \vdash \tyj{\ap{M}{t}}{\varphi(t)}
+  \end{prooftree}
+\]
+
+Again, the rules of $\exists$ decorated with proof terms validate the usual
+interpretation of the intuitionistic existential quantifier.
+
+\[
+  \begin{prooftree}
+    \Gamma, \inj{x}{A} \vdash \propj{\varphi(x)}
+    \quad
+    \Gamma \vdash t \in A
+    \quad
+    \Gamma \vdash \tyj{M}{\varphi(t)}
+    \justifies
+    \Gamma \vdash \tyj{\pair{t}{M}}{(\exists \inj{x}{A})\varphi(x)}
+  \end{prooftree}
+\]
+\[
+  \begin{prooftree}
+    \Gamma \vdash \tyj{M}{(\exists \inj{x}{A})\varphi(x)}
+    \quad
+    \Gamma, x \in A, \tyj{y}{\varphi(x)} \vdash \tyj{N}{\psi}
+    \justifies
+    \Gamma \vdash \tyj{\unpack{M}{(y)N}}{\psi}
+    % \using{w \notin \mathrm{FV}(\Gamma)}
+  \end{prooftree}
+\]
+
+The proposition $\top$ is trivially true, therefore we fix a constant symbol
+$\star$ that denotes its unique, canonical proof.
+
+\[
+  \begin{prooftree}
+    \justifies
+    \Gamma \vdash \tyj{\star}{\top}
+  \end{prooftree}
+\]
+
+The false proposition $\bot$ has no proof, hence, by \emph{ex falso quodlibet},
+if we are presented with a proof of it we might as well deduce anything.
+
+\[
+  \begin{prooftree}
+    \Gamma \vdash \tyj{M}{\bot}
+    \justifies
+    \Gamma \vdash \tyj{\abort{A}{M}}{A}
+  \end{prooftree}
+\]
+
+Figure~\ref{natded-proofterms} show the complete formal system, where the
+``prop'' judgements are left implicit.
+
+\begin{figure}[ht]
+  \begin{mdframed}
+    \[
+      \begin{prooftree}
+        \Gamma \vdash \tyj{M}{A} \qquad \Gamma \vdash \tyj{N}{B}
+        \justifies
+        \Gamma \vdash \tyj{\pair{M}{N}}{A \wedge B}
+      \end{prooftree}
+      \qquad
+      \begin{prooftree}
+        \Gamma \vdash \tyj{M}{A \wedge B}
+        \justifies
+        \Gamma \vdash \tyj{\snd{M}}{B}
+      \end{prooftree}
+      \qquad
+      \begin{prooftree}
+        \Gamma \vdash \tyj{M}{A \wedge B}
+        \justifies
+        \Gamma \vdash \tyj{\fst{M}}{A}
+      \end{prooftree}
+    \]
+    \[
+      \begin{prooftree}
+        \Gamma \vdash \tyj{M}{A}
+        \justifies
+        \Gamma \vdash \tyj{\inleft{B}{M}}{A \vee B}
+      \end{prooftree}
+      \qquad
+      \begin{prooftree}
+        \Gamma \vdash \tyj{M}{B}
+        \justifies
+        \Gamma \vdash \tyj{\inright{A}{M}}{A \vee B}
+      \end{prooftree}
+    \]
+    \[
+      \begin{prooftree}
+        \Gamma \vdash \tyj{M}{A \vee B}
+        \qquad
+        \Gamma, \tyj{x}{A} \vdash \tyj{N_1}{C}
+        \qquad
+        \Gamma, \tyj{y}{B} \vdash \tyj{N_2}{C}
+        \justifies
+        \Gamma \vdash \tyj{\casedisj{M}{(x)N_1}{(y)N_2}}{C}
+      \end{prooftree}
+    \]
+    \[
+      \begin{prooftree}
+        \Gamma, \tyj{x}{\varphi} \vdash \tyj{b(x)}{\psi}
+        \justifies
+        \Gamma \vdash \tyj{\lambda_{\supset} x . b(x)}{\varphi \supset \psi}
+      \end{prooftree}
+      \qquad
+      \begin{prooftree}
+        \Gamma \vdash \tyj{M}{A \supset B}
+        \qquad
+        \Gamma \vdash \tyj{N}{A}
+        \justifies
+        \Gamma \vdash \tyj{\ap{M}{N}}{B}
+      \end{prooftree}
+    \]
+    \[
+      \begin{prooftree}
+        \Gamma, x \in A \vdash \tyj{b(x)}{\varphi (x)}
+        % \Gamma \vdash \tyj{M}{A[w/x]}
+        \justifies
+        \Gamma \vdash \tyj{\lambda_{\forall} w . b(x)}{(\forall x A)\varphi(x)}
+        % \using{w \notin \mathrm{FV}(\Gamma)}
+      \end{prooftree}
+      \qquad
+      \begin{prooftree}
+        \Gamma \vdash \inj{t}{A}
+        \qquad
+        \Gamma \vdash \tyj{M}{(\forall x A)\varphi(x)}
+        \justifies
+        \Gamma \vdash \tyj{\ap{M}{t}}{\varphi(t)}
+      \end{prooftree}
+    \]
+    \[
+      \begin{prooftree}
+        \Gamma \vdash t \in A
+        \quad
+        \Gamma \vdash \tyj{M}{\varphi(t)}
+        \justifies
+        \Gamma \vdash \tyj{\pair{t}{M}}{(\exists \inj{x}{A})\varphi(x)}
+      \end{prooftree}
+      \qquad
+      \begin{prooftree}
+        \derives{\Gamma \vdash \tyj{M}{(\exists \inj{x}{A})\varphi(x)}}
+        {\Gamma, x \in A, \tyj{y}{\varphi(x)} \vdash \tyj{N}{\psi}}
+        \justifies
+        \Gamma \vdash \tyj{\unpack{M}{(y)N}}{\psi}
+        % \using{w \notin \mathrm{FV}(\Gamma)}
+      \end{prooftree}
+    \]
+
+  \end{mdframed}
+  \caption{\label{natded-proofterms} Natural deduction with proof terms.}
+\end{figure}
+
+\subsection{Proof normalization}
+
+\subsubsection{Conjunction}
+
+
+
+\[
+  \begin{prooftree}
+    \[
+    \Gamma \vdash A \qquad \Gamma \vdash B
+    \justifies
+    \Gamma \vdash A \wedge B
+    \]
+    \justifies
+    \Gamma \vdash A
+  \end{prooftree}
+  \qquad \leadsto \qquad
+  \Gamma \vdash A
+\]
+
+\[
+  \begin{prooftree}
+    \[
+    \Gamma \vdash A \qquad \Gamma \vdash B
+    \justifies
+    \Gamma \vdash A \wedge B
+    \]
+    \justifies
+    \Gamma \vdash B
+  \end{prooftree}
+  \qquad \leadsto \qquad
+  \Gamma \vdash B
+\]
+
+\subsubsection{Disjunction}
+
+\[
+  \begin{prooftree}
+    \[
+      \Gamma \vdash A
+      \justifies
+      \Gamma \vdash A \vee B
+    \]
+    \qquad \Gamma, A \vdash C \qquad \Gamma, B \vdash C
+    \justifies
+    \Gamma \vdash C
+  \end{prooftree} \qquad \leadsto \qquad
+  \begin{prooftree}
+    \Gamma \vdash A \qquad \Gamma, A \vdash C
+    \justifies
+    \Gamma \vdash C
+  \end{prooftree}
+\]
+
+\subsubsection{Implication}
+
+\[
+  \begin{prooftree}
+    \[
+      \Gamma, A \vdash B
+      \justifies
+      \Gamma \vdash A \supset B
+    \]
+    \qquad \Gamma \vdash A
+    \justifies
+    \Gamma \vdash B
+  \end{prooftree}\qquad \leadsto \qquad
+  \begin{prooftree}
+    \Gamma, A \vdash B \qquad \Gamma \vdash A
+    \justifies
+    \Gamma \vdash B
+  \end{prooftree}
+\]
+
+\subsubsection{Universal quantification}
+
+\[
+  \begin{prooftree}
+    \[
+      \Gamma \vdash A[w/x]
+      \justifies
+      \Gamma \vdash \forall x A
+    \]
+    \justifies
+    \Gamma \vdash A[t/x]
+  \end{prooftree} \qquad \leadsto \qquad
+  \Gamma[t/w] \vdash A[w/x][t/w] \equiv \Gamma \vdash A[t/x]
+\]
+
+\subsubsection{Existential quantification}
+
+
+\[
+  \begin{prooftree}
+    \[
+      \Gamma \vdash A[t/x]
+      \justifies
+      \Gamma \vdash \exists x A
+    \]
+    \qquad \Gamma, A[w/x] \vdash B
+    \justifies
+    \Gamma \vdash B
+    \using{w \notin \mathrm{FV}(\Gamma, B)}
+  \end{prooftree}
+\]
+\[
+  \qquad \leadsto \qquad
+  \begin{prooftree}
+    \Gamma \vdash A[t/x]
+    \qquad
+    \[
+      \Gamma, A[w/x] \vdash B
+      \justifies
+      \Gamma[t/w], A[w/x][t/w] \vdash B[t/w] \equiv \Gamma, A[t/x] \vdash B
+    \]
+    \justifies
+    \Gamma \vdash B
+  \end{prooftree}
+\]
+
+\subsection{Normalization as computation}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../notes"
+%%% End:
