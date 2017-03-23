@@ -89,9 +89,20 @@ equality. So in order to define a set, we need to give
 
 \paragraph{Quotient sets}
 
-It follows that sets are closed under \strong{quotients}: given a set $X$ and an
-equivalence relation $\sim$ over $X$, we can construct a set $(X,\sim)$ simply by
-changing $=_X$ with $\sim$, leaving the element-forming rules untouched.
+It follows that sets are closed under \strong{quotients}\footnote{
+  Recall that given a set $S$ and an equivalence relation $\sim$ on
+  $S$, the quotient set of $S$ by $\sim$, denoted by $S / \sim$, is
+  the set of all equivalence classes of all elements of $S$, or
+  quotients.
+
+  The equivalence class of an element $a$ in $S$ is the set
+  $ \{x\in S\mid x\sim a\}$ of elements which are equivalent to $a$.  
+
+  For example, if $A=\mathbb{Z}$ and $B=\{5n : n \in \mathbb{Z}\}$,
+  the quotient is $\{0,1,2,3,4\}$.}:
+given a set $X$ and an equivalence relation $\sim$ over $X$, we can
+construct a set $(X,\sim)$ simply by changing $=_X$ with $\sim$,
+leaving the element-forming rules untouched.
 Consider for example the set $X^*$ of finite lists of elements of the set
 $X$. We can construct the set of finite subsets of $X$ by simply quotienting
 $X^*$ with an equivalence relation $\sim$ that identifies lists with the same
