@@ -71,14 +71,14 @@ and explain how it can be derived:
     \Gamma \vdash \propj{\varphi}
     \justifies
     \ctxtj{\Gamma, \tyj{u}{\varphi}}
-    \using{\tyj{u}{\varphi} \text{ not in } \Gamma}
+    \using{u \text{ fresh}}
   \end{prooftree}
   \qquad
   \begin{prooftree}
     \Gamma \vdash \setj{A}
     \justifies
     \ctxtj{\Gamma, \inj{x}{A}}
-    \using{\inj{x}{A} \text{ not in } \Gamma}
+    \using{x \text{ fresh}}
   \end{prooftree}
 \]
 
@@ -92,9 +92,9 @@ $A$, then we are entitled to assert that $A$ is true, hence
 
 \[
   \begin{prooftree}
-    \ctxtj{\Gamma, \tyj{x}{\varphi}}
+    \ctxtj{\Gamma, \tyj{x}{\varphi}, \Gamma'}
     \justifies
-    \Gamma, \tyj{x}{\varphi} \vdash \varphi
+    \Gamma, \tyj{x}{\varphi}, \Gamma' \vdash \truej{\varphi}
   \end{prooftree}
 \]
 
@@ -102,12 +102,28 @@ In the same way, if we assume that $\inj{x}{A}$, we may as well assert it:
 
 \[
   \begin{prooftree}
-    \ctxtj{\Gamma, \inj{x}{A}}
+    \ctxtj{\Gamma, \inj{x}{A}, \Gamma'}
     \justifies
-    \Gamma, \inj{x}{A} \vdash \inj{x}{A}
+    \Gamma, \inj{x}{A}, \Gamma' \vdash \inj{x}{A}
   \end{prooftree}
 \]
 
+Notice that we implicitly assume that the context formation jusgements are
+extended with their hypothetical forms, for example
+
+\[
+  \begin{prooftree}
+    \Gamma, \inj{x}{A}, \Gamma' \vdash \propj{\varphi(x)}
+    \justifies
+    \ctxtj{\Gamma, \inj{x}{A}, \Gamma', \tyj{u}{\varphi(x)}}
+  \end{prooftree}
+\]
+
+is a perfectly valid derivation, provided the variable $u$ did not already occur
+in the context. Notice, also, that from our definition it follows
+that in a context $\Gamma, \inj{x}{A}, \Gamma'$, $\Gamma$ neither contains
+$\inj{x}{A}$, nor it contains $x$ free. This property will come in handy when we
+introduce substitution in contexts.
 The complete natural deduction system for multi-sorted first-order
 intuitionistic logic with explicit contexts is shown in
 Figure~\ref{natded-explicit-context}.
@@ -117,43 +133,43 @@ Figure~\ref{natded-explicit-context}.
 
   \[
     \begin{prooftree}
-      \Gamma \vdash A \qquad \Gamma \vdash B
+      \Gamma \vdash \varphi \qquad \Gamma \vdash \psi
       \justifies
-      \Gamma \vdash A \wedge B
+      \Gamma \vdash \varphi \wedge \psi
     \end{prooftree}
     \qquad
     \begin{prooftree}
-      \Gamma \vdash A \wedge B
+      \Gamma \vdash \varphi \wedge \psi
       \justifies
-      \Gamma \vdash A
+      \Gamma \vdash \varphi
     \end{prooftree}
     \qquad
     \begin{prooftree}
-      \Gamma \vdash A \wedge B
+      \Gamma \vdash \varphi \wedge \psi
       \justifies
-      \Gamma \vdash B
+      \Gamma \vdash \psi
     \end{prooftree}
   \]
 
   \[
     \begin{prooftree}
-      \Gamma \vdash A
+      \Gamma \vdash \varphi
       \justifies
-      \Gamma \vdash A \vee B
+      \Gamma \vdash \varphi \vee \psi
     \end{prooftree}
     \qquad
     \begin{prooftree}
-      \Gamma \vdash B
+      \Gamma \vdash \psi
       \justifies
-      \Gamma \vdash A \vee B
+      \Gamma \vdash \varphi \vee \psi
     \end{prooftree}
     \qquad
     \begin{prooftree}
-      \Gamma \vdash A \vee B
+      \Gamma \vdash \varphi \vee \psi
       \quad
-      \Gamma, \tyj{u}{A} \vdash C
+      \Gamma, \tyj{u}{\varphi} \vdash C
       \quad
-      \Gamma, \tyj{v}{B} \vdash C
+      \Gamma, \tyj{v}{\psi} \vdash C
       \justifies
       \Gamma \vdash C
     \end{prooftree}
@@ -161,15 +177,15 @@ Figure~\ref{natded-explicit-context}.
 
   \[
     \begin{prooftree}
-      \Gamma, \tyj{u}{A} \vdash B
+      \Gamma, \tyj{u}{\varphi} \vdash \psi
       \justifies
-      \Gamma \vdash A \supset B
+      \Gamma \vdash \varphi \supset \psi
     \end{prooftree}
     \qquad
     \begin{prooftree}
-      \Gamma \vdash A \supset B \qquad \Gamma \vdash A
+      \Gamma \vdash \varphi \supset \psi \qquad \Gamma \vdash \varphi
       \justifies
-      \Gamma \vdash B
+      \Gamma \vdash \psi
     \end{prooftree}
   \]
 
@@ -193,9 +209,12 @@ Figure~\ref{natded-explicit-context}.
 
   \[
     \begin{prooftree}
-      \Gamma \vdash \varphi(t)
-      \qquad
-      \Gamma \vdash \inj{t}{A}
+      \begin{array}{@{}c}
+        \Gamma, \inj{x}{A} \vdash \propj{\varphi(x)} \\
+        \Gamma \vdash \varphi(t)
+        \qquad
+        \Gamma \vdash \inj{t}{A}  
+      \end{array}
       \justifies
       \Gamma \vdash (\exists \inj{x}{A}) \varphi(x)
     \end{prooftree}
@@ -203,9 +222,9 @@ Figure~\ref{natded-explicit-context}.
     \begin{prooftree}
       \Gamma \vdash (\exists \inj{x}{A}) \varphi(x)
       \qquad
-      \Gamma, \inj{x}{A}, \tyj{y}{A(x)} \vdash B
+      \Gamma, \inj{x}{A}, \tyj{y}{\varphi(x)} \vdash \psi
       \justifies
-      \Gamma \vdash B
+      \Gamma \vdash \psi
     \end{prooftree}
   \]
   \[
@@ -217,7 +236,7 @@ Figure~\ref{natded-explicit-context}.
     \begin{prooftree}
       \Gamma \vdash \bot
       \justifies
-      \Gamma \vdash A
+      \Gamma \vdash \varphi
     \end{prooftree}
   \]
 \end{mdframed}
@@ -304,22 +323,129 @@ Figure~\ref{natded-explicit-context}.
   of context, which requires the $\forall$ introduction rule to refer to a fresh
   variable (in this case, $z$).
 
+  Consider another logical fallacy that can be derived if we ignore the variable
+  conditions of natural deduction:
+
+  \[
+    \begin{prooftree}
+      \[
+        \[
+          \[
+            \justifies
+            \exists x A
+            \using{u}
+          \] \quad 
+          \[
+            \justifies
+            A[w/x]
+            \using{v}
+          \]
+          \justifies
+          A[w/x]
+          \using{v}
+        \]
+        \justifies
+        \forall x A
+      \]
+      \justifies
+      \exists x A \rightarrow \forall x A
+    \end{prooftree}
+  \]
+
+  This derivation is \emph{not} valid, since the parameter $w$ used in the
+  discharged hypothesis of the existential elimination is free in the conclusion
+  of the rule. Notice how this incorrect development of the proof gets blocked
+  by the definition of context itself:
+
+  \[
+    \begin{prooftree}
+      \[
+        \[
+          \[
+            \justifies
+            (\exists x \in A) \varphi(x), x \in A \vdash (\exists x \in A)
+            \varphi(x)
+          \]
+          \quad 
+          (\exists x \in A) \varphi(x), x \in A, y \in A, \varphi(y) \vdash \varphi(x)
+          \justifies
+          (\exists x \in A) \varphi(x), x \in A \vdash \varphi(x)
+        \]
+        \justifies
+        (\exists x \in A) \varphi(x) \vdash (\forall x \in A)\varphi(x)
+      \]
+      \justifies
+      \vdash (\exists x \in A) \varphi(x) \rightarrow (\forall x \in A)\varphi(x)
+    \end{prooftree}
+  \]
+
+  The variable $y$ introduced by the existential elimination rule is forced to
+  be different from $x$, which is already in context. Hence, there is no way to
+  unify the hypothesis, which must be $\varphi(y)$, with the conclusion
+  $\varphi(x)$.
+
+\end{example}
+
+\begin{example}
+  A common misconception about intuitionistic logic in that it is in explicit
+  opposition to classical logic, to the point that typically classical
+  principles like LEM are provably false in it. This view is, of course, wrong,
+  since intuitionistic logic and in general constructive mathematics in the
+  Bishop sense are compatible with classical mathematics. In particular, observe
+  that $\neg \neg (A \vee \neg A)$ is an intuitionistic tautology:
+
+  \[
+    \begin{prooftree}
+      \[
+        \[\justifies (A \vee \neg A) \rightarrow \bot \using{u}\] \quad 
+        \[
+          \[
+            \[
+              \[\justifies (A \vee \neg A) \rightarrow \bot \using{u}\] \quad 
+              \[
+                \[ \justifies A \using{w} \]
+                \justifies
+                A \vee \neg A
+              \]
+              \justifies
+              \bot
+            \]
+            \justifies
+            A \rightarrow \bot
+            \using{w}
+          \]
+          \justifies
+          A \vee \neg A
+        \]
+        \justifies
+        \bot
+      \]
+      \justifies
+      \neg \neg (A \vee \neg A)
+    \end{prooftree}
+  \]
+  
 \end{example}
 
 \subsection{Proof terms}
 
 We write $\Gamma \vdash M : A$ to express the judgement ``$M$ is a \emph{proof
-  term} for the proposition $A$ under the hypotheses $\Gamma$''. We extend our
-definition of contexts to allow assumptions about proof of propositions:
+  term} for the proposition $A$ under the hypotheses $\Gamma$''.
+% We extend our definition of contexts to allow assumptions about proofs of
+% propositions:
 
-\[
-  \begin{prooftree}
-    \Gamma \vdash \propj{A}
-    \justifies
-    \ctxtj{\Gamma, \tyj{x}{A}}
-    \using{\tyj{x}{A} \text{ not in } \Gamma}
-  \end{prooftree}
-\]
+% \[
+%   \begin{prooftree}
+%     \Gamma \vdash \propj{A}
+%     \justifies
+%     \ctxtj{\Gamma, \tyj{x}{A}}
+%     \using{\tyj{x}{A} \text{ not in } \Gamma}
+%   \end{prooftree}
+% \]
+
+We now extend our system of natural deduction with proof terms:
+
+\subsubsection{Conjunction}
 
 We know what counts as a proof of the proposition $A \wedge B$, namely a
 proof of $A$ and a proof of $B$. It makes sense for a proof term for the
@@ -349,6 +475,8 @@ by projection:
     \Gamma \vdash \tyj{\fst{M}}{A}
   \end{prooftree}
 \]
+
+\subsubsection{Disjunction}
 
 A proof of a disjunction $A \vee B$ is a proof of $A$ or a proof of $B$,
 together with the information telling us \emph{which one} of the two. The proof
@@ -385,6 +513,8 @@ itself, and proving the conclusion by case analysis.
   \end{prooftree}
 \]
 
+\subsubsection{Implication}
+
 A proof of an implication $\varphi \supset \psi$ is understood to be a method,
 or operation, that yields a proof of $\psi$ given a proof of
 $\varphi$.
@@ -404,6 +534,8 @@ $\varphi$.
     \Gamma \vdash \tyj{\ap{M}{N}}{B}
   \end{prooftree}
 \]
+
+\subsubsection{Universal quantification}
 
 A similar situation is with universal quantification: a proof of
 $(\forall \inj{x}{A})\varphi (x)$ is an operation that yields a proof of
@@ -430,6 +562,8 @@ $\varphi(x)$ given an element $x$ of the set $A$.
   \end{prooftree}
 \]
 
+\subsubsection{Existential quantification}
+
 Again, the rules of $\exists$ decorated with proof terms validate the usual
 interpretation of the intuitionistic existential quantifier.
 
@@ -455,6 +589,8 @@ interpretation of the intuitionistic existential quantifier.
   \end{prooftree}
 \]
 
+\subsubsection{True and false}
+
 The proposition $\top$ is trivially true, therefore we fix a constant symbol
 $\star$ that denotes its unique, canonical proof.
 
@@ -477,51 +613,52 @@ if we are presented with a proof of it we might as well deduce anything.
 \]
 
 Figure~\ref{natded-proofterms} show the complete formal system, where the
-``prop'' judgements are left implicit.
+obvious ``prop'' judgements are left implicit.
 
 \begin{figure}[ht]
   \begin{mdframed}
     \[
       \begin{prooftree}
-        \Gamma \vdash \tyj{M}{A} \qquad \Gamma \vdash \tyj{N}{B}
+        \Gamma \vdash \tyj{M}{\varphi} \qquad \Gamma \vdash \tyj{N}{\psi}
         \justifies
-        \Gamma \vdash \tyj{\pair{M}{N}}{A \wedge B}
+        \Gamma \vdash \tyj{\pair{M}{N}}{\varphi \wedge \psi}
       \end{prooftree}
       \qquad
       \begin{prooftree}
-        \Gamma \vdash \tyj{M}{A \wedge B}
+        \Gamma \vdash \tyj{M}{\varphi \wedge \psi}
         \justifies
-        \Gamma \vdash \tyj{\snd{M}}{B}
+        \Gamma \vdash \tyj{\fst{M}}{\varphi}
       \end{prooftree}
       \qquad
       \begin{prooftree}
-        \Gamma \vdash \tyj{M}{A \wedge B}
+        \Gamma \vdash \tyj{M}{\varphi \wedge \psi}
         \justifies
-        \Gamma \vdash \tyj{\fst{M}}{A}
+        \Gamma \vdash \tyj{\snd{M}}{\psi}
       \end{prooftree}
     \]
     \[
       \begin{prooftree}
-        \Gamma \vdash \tyj{M}{A}
+        \Gamma \vdash \tyj{M}{\varphi}
         \justifies
-        \Gamma \vdash \tyj{\inleft{B}{M}}{A \vee B}
+        \Gamma \vdash \tyj{\inleft{\psi}{M}}{\varphi \vee \psi}
       \end{prooftree}
       \qquad
       \begin{prooftree}
-        \Gamma \vdash \tyj{M}{B}
+        \Gamma \vdash \tyj{M}{\psi}
         \justifies
-        \Gamma \vdash \tyj{\inright{A}{M}}{A \vee B}
+        \Gamma \vdash \tyj{\inright{\varphi}{M}}{\varphi \vee \psi}
       \end{prooftree}
     \]
     \[
       \begin{prooftree}
-        \Gamma \vdash \tyj{M}{A \vee B}
+        \Gamma \vdash \tyj{M}{\varphi \vee \psi}
         \qquad
-        \Gamma, \tyj{x}{A} \vdash \tyj{N_1}{C}
+        \Gamma, \tyj{x}{\varphi} \vdash \tyj{d_1(x)}{\phi}
         \qquad
-        \Gamma, \tyj{y}{B} \vdash \tyj{N_2}{C}
+        \Gamma, \tyj{x}{\psi} \vdash \tyj{d_2(x)}{\phi}
         \justifies
-        \Gamma \vdash \tyj{\casedisj{M}{(x)N_1}{(y)N_2}}{C}
+        \Gamma \vdash \tyj{\casedisj{M}{(x)d_1}{(x)d_2}}{\phi}
+        \using{\orelimrule}
       \end{prooftree}
     \]
     \[
@@ -532,42 +669,52 @@ Figure~\ref{natded-proofterms} show the complete formal system, where the
       \end{prooftree}
       \qquad
       \begin{prooftree}
-        \Gamma \vdash \tyj{M}{A \supset B}
+        \Gamma \vdash \tyj{M}{\varphi \supset \psi}
         \qquad
-        \Gamma \vdash \tyj{N}{A}
+        \Gamma \vdash \tyj{N}{\varphi}
         \justifies
-        \Gamma \vdash \tyj{\ap{M}{N}}{B}
+        \Gamma \vdash \tyj{\ap{M}{N}}{\psi}
       \end{prooftree}
     \]
     \[
       \begin{prooftree}
-        \Gamma, x \in A \vdash \tyj{b(x)}{\varphi (x)}
-        % \Gamma \vdash \tyj{M}{A[w/x]}
+        \begin{array}{@{}c}
+          \Gamma, x \in A \vdash \propj{\varphi(x)} \\
+          \Gamma, x \in A \vdash \tyj{b(x)}{\varphi (x)}  
+        \end{array}
         \justifies
         \Gamma \vdash \tyj{\lambda_{\forall} w . b(x)}{(\forall x A)\varphi(x)}
         % \using{w \notin \mathrm{FV}(\Gamma)}
       \end{prooftree}
       \qquad
       \begin{prooftree}
-        \Gamma \vdash \inj{t}{A}
-        \qquad
-        \Gamma \vdash \tyj{M}{(\forall x A)\varphi(x)}
+        \begin{array}{@{}c}
+          \Gamma, \inj{x}{A} \vdash \propj{\varphi(x)} \\
+          \Gamma \vdash \inj{t}{A}
+          \qquad
+          \Gamma \vdash \tyj{M}{(\forall x A)\varphi(x)}
+        \end{array}
         \justifies
         \Gamma \vdash \tyj{\ap{M}{t}}{\varphi(t)}
       \end{prooftree}
     \]
     \[
       \begin{prooftree}
-        \Gamma \vdash t \in A
-        \quad
-        \Gamma \vdash \tyj{M}{\varphi(t)}
+        \begin{array}{@{}c}
+          \Gamma, \inj{x}{A} \vdash \propj{\varphi(x)} \\  
+          \Gamma \vdash t \in A
+          \quad
+          \Gamma \vdash \tyj{M}{\varphi(t)}
+          \end{array}
         \justifies
         \Gamma \vdash \tyj{\pair{t}{M}}{(\exists \inj{x}{A})\varphi(x)}
       \end{prooftree}
       \qquad
       \begin{prooftree}
-        \derives{\Gamma \vdash \tyj{M}{(\exists \inj{x}{A})\varphi(x)}}
-        {\Gamma, x \in A, \tyj{y}{\varphi(x)} \vdash \tyj{N}{\psi}}
+        \begin{array}{@{}c}
+          \Gamma \vdash \tyj{M}{(\exists \inj{x}{A})\varphi(x)}\\
+          \Gamma, x \in A, \tyj{y}{\varphi(x)} \vdash \tyj{N}{\psi}
+        \end{array}
         \justifies
         \Gamma \vdash \tyj{\unpack{M}{(y)N}}{\psi}
         % \using{w \notin \mathrm{FV}(\Gamma)}
@@ -577,6 +724,137 @@ Figure~\ref{natded-proofterms} show the complete formal system, where the
   \end{mdframed}
   \caption{\label{natded-proofterms} Natural deduction with proof terms.}
 \end{figure}
+
+\begin{example}
+
+  Below is a derivation of the intuitionistically valid proposition
+
+  \[
+    (\psi \rightarrow \chi) \rightarrow (\varphi \rightarrow \psi)
+    \rightarrow \varphi \rightarrow \chi
+  \]
+
+  \[
+    \begin{prooftree}
+      \[
+        \[
+          \[
+            f \in ..., ... \vdash f \in ... \quad 
+            \[
+              ... \vdash g \in \varphi \rightarrow \psi \quad 
+              ... \vdash x \in \varphi
+              \justifies
+              ... \vdash Ap(g,x) \in \psi
+            \]
+            \justifies
+            f \in ..., g \in ..., x \in \varphi \vdash Ap(f, Ap(g,x)) \in \chi
+          \]
+          \justifies
+          f \in ..., g \in \varphi \rightarrow \psi \vdash \lambda x . Ap(f, Ap(g,x)) \in \varphi \rightarrow \chi
+        \]
+        \justifies
+        f \in \psi \rightarrow \chi \vdash \lambda g x . Ap(f, Ap(g,x)) \in (\varphi \rightarrow \psi) \rightarrow \varphi \rightarrow \chi
+      \]
+      \justifies
+      \vdash \lambda f g x . Ap(f, Ap(g,x)) \in (\psi \rightarrow \chi) \rightarrow (\varphi \rightarrow \psi)
+    \rightarrow \varphi \rightarrow \chi
+    \end{prooftree}
+  \]
+
+  The proof term of this proposition corresponds to the $B$ combinator in
+  combinatory logic, which performs function composition. In fact, notice how
+
+  \[
+    B f g x = f(g(x))
+  \]
+
+\end{example}
+
+\begin{example}
+
+  Below is a derivation with proof terms of the intuitionistically valid
+  proposition
+
+  \[
+    (\exists x \in A)\varphi(x) \rightarrow
+    \neg (\forall x \in A)\neg \varphi(x)
+  \]
+  
+  \[
+    \begin{prooftree}
+      \[
+        \[
+          e \in ..., ... \vdash e \in ... \quad 
+          \[
+            \[
+              e \in ..., f \in ... \vdash f \in ... \quad 
+              x \in A, ... \vdash x \in A
+              \justifies
+              ... \vdash Ap(f,x) \in \varphi(x) \rightarrow \bot
+            \] \quad 
+            ..., y \in \varphi(x) \vdash y \in \varphi(x)
+            \justifies
+            e \in ..., f \in ..., x \in A, y \in \varphi(x) \vdash Ap(Ap(f,x),y) \in \bot
+          \]
+          \justifies
+          e \in ..., f \in (\forall x \in A)(\varphi(x) \rightarrow \bot) \vdash E(e, (x,y)Ap(Ap(f,x),y)) \in \bot
+        \]
+        \justifies
+        e \in (\exists x \in A)\varphi(x) \vdash \lambda f . E(e, (x,y)Ap(Ap(f,x),y)) \in [(\forall x \in A)(\varphi(x) \rightarrow \bot)] \rightarrow \bot
+      \]
+      \justifies
+      \vdash \lambda e f . E(e, (x,y)Ap(Ap(f,x),y)) \in (\exists x \in A)\varphi(x) \rightarrow
+    \neg (\forall x \in A)\neg \varphi(x)
+    \end{prooftree}
+  \]
+\end{example}
+
+\begin{example}
+
+  Below is a derivation with proof terms of the intuitionistically valid
+  proposition
+
+  \[
+    (\forall x \in A)(\varphi(x) \rightarrow \psi(x))
+    \rightarrow
+    ((\exists x \in A)\varphi(x) \rightarrow (\exists x \in A)\psi(x))
+  \]
+
+  \[
+    \begin{prooftree}
+      \[
+    \[
+      ..., e \in ... \vdash e \in ...
+      \[
+        \[
+          \[
+            ..., f \in ..., ... \vdash f \in ...
+            \quad
+            ..., x \in A, ... \vdash x \in A
+          \justifies
+            ..., f \in ..., ... \vdash Ap(f,x) \in \varphi(x) \rightarrow \psi(x)
+          \]
+          \quad ..., y \in \varphi(x) \vdash y \in \varphi(x)
+        \justifies
+          ..., x \in A, y \in \varphi(x) \vdash Ap(Ap(f,x),y) \in \psi(x)
+        \]
+        ..., x \in A, ... \vdash x \in A
+        \justifies
+        ..., x \in A, y \in \varphi(x) \vdash <x, Ap(Ap(f,x),y)> \in (\exists x \in A)\psi(x)
+      \]
+    \justifies
+      f \in ..., e \in (\exists x \in A)\varphi(x) \vdash E(e, (x,y)<x, Ap(Ap(f,x),y)>) \in (\exists x \in A)\psi(x)
+    \]
+  \justifies
+    f \in (\forall x \in A)(\varphi(x) \rightarrow \psi(x)) \vdash \lambda e . E(e, (x,y)<..>) \in (\exists \rightarrow \exists)
+  \]
+\justifies
+  \vdash \lambda f e . E(...) \in (\forall x \in A)(\varphi(x) \rightarrow \psi(x))
+    \rightarrow
+    ((\exists x \in A)\varphi(x) \rightarrow (\exists x \in A)\psi(x))
+    \end{prooftree}
+  \]
+\end{example}
 
 \subsection{Proof normalization}
 
