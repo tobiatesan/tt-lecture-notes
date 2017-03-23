@@ -62,7 +62,16 @@ define it on all possible elements of the set:
   \end{prooftree}
 \]
 
-again with the obvious equalities. The computation rule is also straightforward:
+again with the obvious equalities\footnote{
+  In the elimination rule $c$ occurs free in $E_n$; upon substituting $c$ with some $c' \in \nty{n}$, $E_n(c', \vec{d})$ yields an element of $C(c')$.
+
+  The computation rule specifies \emph{which} element.
+
+  For this pair of rules, an analogy can be drawn to typing and evaluation rule pairs in programming literature.
+  Notice, however, that the nature of ``operation'' of $E_n$ is purely at the ``metalanguage level'' - there is no syntactic feature giving that indication, nor is an ``arrow type'' involved anywhere; however, we know that we are modelling a computation when substituting for $c$.
+  Carrying the analogy to its ultimate end, the abstraction $\lambda c. E_n(c, \vec{d})$ would yield some element $d_i$ of $C((i-1)_n)$ upon being applied to some element $(i-1)_n$ of $\nty{n}$.
+}.
+The computation rule is also straightforward:
 
 \[
   \begin{prooftree}
